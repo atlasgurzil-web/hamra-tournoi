@@ -1,10 +1,18 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Calendar, MapPin, Clock, Users, ArrowRight } from 'lucide-react';
 import { Tournament } from '../types/tournament';
 
 export const VercelTournamentCard: React.FC<{ tournament: Tournament }> = ({ tournament }) => {
   const percentage = Math.min(100, Math.round((tournament.confirmed_count / tournament.max_players) * 100));
+  const [animatedPercent, setAnimatedPercent] = useState(0);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setAnimatedPercent(percentage);
+    }, 200);
+    return () => clearTimeout(timer);
+  }, [percentage]);
 
   return (
     <div className="w-full max-w-full bg-[#0F172A]/90 backdrop-blur-xl rounded-2xl sm:rounded-3xl border border-slate-800 shadow-2xl hover:border-red-500/50 transition-all duration-300 flex flex-col overflow-hidden group hover:-translate-y-1.5 hover:shadow-red-950/30">
@@ -52,7 +60,7 @@ export const VercelTournamentCard: React.FC<{ tournament: Tournament }> = ({ tou
           </div>
         </div>
 
-        {/* Live Capacity Gauge */}
+        {/* Live Capacity Gauge (Linear animated) */}
         <div className="bg-[#070A10] p-4 sm:p-6 rounded-xl sm:rounded-2xl border border-slate-800 space-y-3 shadow-inner">
           <div className="flex items-center justify-between text-xs sm:text-base font-bold">
             <span className="text-slate-300 flex items-center gap-1.5 sm:gap-2">
@@ -64,11 +72,11 @@ export const VercelTournamentCard: React.FC<{ tournament: Tournament }> = ({ tou
             </span>
           </div>
 
-          {/* Glowing Red-Amber Progress Bar */}
-          <div className="w-full h-3 sm:h-3.5 bg-slate-850 rounded-full overflow-hidden border border-slate-700">
+          {/* Glowing Red-Amber Progress Bar with smooth transition */}
+          <div className="w-full h-3 sm:h-3.5 bg-slate-850 rounded-full overflow-hidden border border-slate-700 relative">
             <div
-              className="h-full bg-gradient-to-r from-amber-500 via-red-500 to-rose-600 rounded-full transition-all duration-500 shadow-lg shadow-red-600/50"
-              style={{ width: `${Math.max(4, percentage)}%` }}
+              className="h-full bg-gradient-to-r from-amber-500 via-red-500 to-rose-600 rounded-full transition-all duration-1000 ease-out shadow-lg shadow-red-600/50"
+              style={{ width: `${Math.max(4, animatedPercent)}%` }}
             ></div>
           </div>
 

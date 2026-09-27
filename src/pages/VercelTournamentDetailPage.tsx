@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Crown, Calendar, MapPin, Clock, Award, QrCode, Users, UserCheck, ShieldCheck, Send, CheckCircle2, X } from 'lucide-react';
 import { useTournaments } from '../context/TournamentContext';
+import { CompetitorPassCard } from '../components/CompetitorPassCard';
 
 export const VercelTournamentDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -21,8 +22,28 @@ export const VercelTournamentDetailPage: React.FC = () => {
   });
 
   const [qrModalOpen, setQrModalOpen] = useState(false);
-  const [successInfo, setSuccessInfo] = useState<{ bibNumber: number; fullName: string } | null>(null);
+  const [successInfo, setSuccessInfo] = useState<{
+    bibNumber: number;
+    fullName: string;
+    club?: string;
+    fide_id?: string;
+    rating?: number;
+    sex?: 'M' | 'F';
+  } | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [animatedPercent, setAnimatedPercent] = useState(0);
+
+  const percentage = tournament
+    ? Math.min(100, Math.round((tournament.confirmed_count / tournament.max_players) * 100))
+    : 0;
+
+  // Linear-style fluid spring animation on gauge mount
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setAnimatedPercent(percentage);
+    }, 150);
+    return () => clearTimeout(timer);
+  }, [percentage]);
 
   if (!tournament) {
     return (
@@ -35,8 +56,6 @@ export const VercelTournamentDetailPage: React.FC = () => {
       </div>
     );
   }
-
-  const percentage = Math.min(100, Math.round((tournament.confirmed_count / tournament.max_players) * 100));
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,7 +79,11 @@ export const VercelTournamentDetailPage: React.FC = () => {
       if (res.success && res.bibNumber) {
         setSuccessInfo({
           bibNumber: res.bibNumber,
-          fullName: `${formData.first_name} ${formData.last_name}`
+          fullName: `${formData.first_name} ${formData.last_name}`,
+          club: formData.club || 'Hamra Annaba',
+          fide_id: formData.fide_id,
+          rating: formData.rating ? parseInt(formData.rating, 10) : 0,
+          sex: formData.sex
         });
         setFormData({
           first_name: '',
@@ -144,14 +167,14 @@ export const VercelTournamentDetailPage: React.FC = () => {
                   className="flex items-center gap-1.5 btn-hamra px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold text-white transition-all shadow-lg active:scale-95 cursor-pointer"
                 >
                   <QrCode className="w-3.5 h-3.5" />
-                  <span>QR Code</span>
+                  <span>Affiche & QR</span>
                 </button>
               </div>
             </div>
 
           </div>
 
-          {/* Real-time Capacity Gauge Banner */}
+          {/* Real-time Capacity Gauge Banner (Linear Spring Fill Animation) */}
           <div className="mt-6 sm:mt-10 bg-[#070A10] text-white rounded-xl sm:rounded-2xl p-4 sm:p-8 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-4 sm:gap-6 border border-slate-800">
             <div className="text-center md:text-left">
               <div className="text-[11px] sm:text-xs font-mono font-bold uppercase tracking-wider text-slate-400 flex items-center justify-center md:justify-start gap-1.5">
@@ -173,10 +196,10 @@ export const VercelTournamentDetailPage: React.FC = () => {
                 <span className="text-slate-400">Remplissage de la salle :</span>
                 <span className="tabular-nums font-black text-white">{percentage}%</span>
               </div>
-              <div className="w-full h-3 sm:h-4 bg-slate-850 rounded-full overflow-hidden border border-slate-700">
+              <div className="w-full h-3.5 sm:h-4 bg-slate-850 rounded-full overflow-hidden border border-slate-700 relative">
                 <div
-                  className="h-full bg-gradient-to-r from-amber-500 via-red-500 to-rose-600 rounded-full transition-all duration-700 ease-out shadow-lg shadow-red-600/50"
-                  style={{ width: `${Math.max(4, percentage)}%` }}
+                  className="h-full bg-gradient-to-r from-amber-500 via-red-500 to-rose-600 rounded-full transition-all duration-1000 ease-out shadow-lg shadow-red-600/50"
+                  style={{ width: `${Math.max(4, animatedPercent)}%` }}
                 ></div>
               </div>
             </div>
@@ -196,51 +219,13 @@ export const VercelTournamentDetailPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Confirmation Modal */}
+      {/* Rimowa / Apple Interactive Competitor Pass Modal */}
       {successInfo && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-md">
-          <div className="bg-[#0F172A] border-2 border-emerald-500/50 rounded-2xl sm:rounded-3xl p-6 sm:p-8 max-w-lg w-full text-center space-y-5 sm:space-y-6 shadow-2xl relative">
-            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-emerald-950/80 border-2 border-emerald-500 text-emerald-400 flex items-center justify-center mx-auto shadow-xl">
-              <CheckCircle2 className="w-8 h-8 sm:w-10 sm:h-10" />
-            </div>
-
-            <div className="space-y-1 sm:space-y-2">
-              <span className="text-xs font-mono font-bold uppercase tracking-wider text-emerald-400">
-                Inscription Validée & Confirmée
-              </span>
-              <h3 className="font-serif font-black text-2xl sm:text-3xl text-white">
-                Félicitations, {successInfo.fullName} !
-              </h3>
-              <p className="text-xs sm:text-sm text-slate-300">
-                Votre place est garantie pour <strong>{tournament.name}</strong>.
-              </p>
-            </div>
-
-            {/* Dossard Big Display */}
-            <div className="bg-[#070A10] p-4 sm:p-6 rounded-xl sm:rounded-2xl border border-slate-800 space-y-1">
-              <span className="text-[11px] sm:text-xs font-mono text-slate-400 uppercase tracking-widest block">Votre Dossard Officiel</span>
-              <span className="font-mono font-black text-4xl sm:text-6xl text-amber-400 block tracking-wider">
-                #{successInfo.bibNumber}
-              </span>
-              <span className="text-[11px] sm:text-xs text-emerald-400 font-mono block">Attribué et synchronisé Swiss-Manager</span>
-            </div>
-
-            <div className="pt-2 flex flex-col sm:flex-row gap-2.5 sm:gap-3">
-              <button
-                onClick={() => setSuccessInfo(null)}
-                className="flex-1 py-3 sm:py-3.5 rounded-xl btn-hamra text-xs sm:text-sm font-bold shadow-xl"
-              >
-                Fermer
-              </button>
-              <Link
-                to="/dashboard"
-                className="flex-1 py-3 sm:py-3.5 rounded-xl btn-secondary text-xs sm:text-sm font-bold"
-              >
-                Voir dans le Dashboard
-              </Link>
-            </div>
-          </div>
-        </div>
+        <CompetitorPassCard
+          player={successInfo}
+          tournament={tournament}
+          onClose={() => setSuccessInfo(null)}
+        />
       )}
 
       {/* Registration Form */}
@@ -403,21 +388,21 @@ export const VercelTournamentDetailPage: React.FC = () => {
               <Send className="w-5 h-5 sm:w-6 sm:h-6" />
               <span className="truncate">
                 {isSubmitting
-                  ? "Attribution en cours..."
+                  ? "Génération de votre Pass en cours..."
                   : tournament.spots_left > 0
-                  ? "Valider mon Inscription & Réserver ma Place →"
+                  ? "Valider mon Inscription & Obtenir mon Pass VIP →"
                   : "Tournoi Complet (Inscriptions Clôturées)"}
               </span>
             </button>
             <p className="text-[11px] sm:text-sm text-center text-slate-400 mt-3 sm:mt-4 font-medium flex items-center justify-center gap-1.5">
               <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-400 shrink-0" />
-              <span>Attribution instantanée et sécurisée de votre dossard officiel FIDE.</span>
+              <span>Génération instantanée de votre Pass officiel et verrouillage de place anti-surréservation.</span>
             </p>
           </div>
         </form>
       </div>
 
-      {/* QR Code Modal */}
+      {/* QR Code Modal for Poster & Share */}
       {qrModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-md">
           <div className="bg-[#0F172A] border border-slate-800 rounded-2xl sm:rounded-3xl p-6 sm:p-8 max-w-sm sm:max-w-md w-full space-y-4 sm:space-y-6 shadow-2xl relative text-center">

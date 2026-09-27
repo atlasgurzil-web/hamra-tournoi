@@ -70,7 +70,7 @@ export const VercelJoueursPage: React.FC = () => {
         <div>
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-950/60 border border-red-500/40 text-red-300 text-[11px] sm:text-xs font-mono font-bold uppercase tracking-wider mb-2">
             <Users className="w-3.5 h-3.5 text-red-400" />
-            <span>Fichier Central des Joueurs</span>
+            <span>REGISTRE_CENTRAL // FIDE_DATABASE</span>
           </div>
           <h1 className="font-serif font-black text-2xl sm:text-4xl lg:text-5xl text-white tracking-tight break-words">
             Annuaire & Cotes FIDE
@@ -83,7 +83,7 @@ export const VercelJoueursPage: React.FC = () => {
         <div className="flex items-center gap-3">
           <button
             onClick={handleExportCSV}
-            className="flex items-center justify-center gap-2 w-full sm:w-auto px-4 py-2.5 sm:px-6 sm:py-3.5 rounded-xl sm:rounded-2xl btn-gold text-xs sm:text-sm font-bold shadow-xl"
+            className="flex items-center justify-center gap-2 w-full sm:w-auto px-4 py-2.5 sm:px-6 sm:py-3.5 rounded-xl sm:rounded-2xl btn-gold text-xs sm:text-sm font-bold shadow-xl cursor-pointer"
           >
             <Download className="w-4 h-4" />
             <span>Exporter l'annuaire (.CSV)</span>
@@ -94,25 +94,25 @@ export const VercelJoueursPage: React.FC = () => {
       {/* KPI Stats in Compact Responsive Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-6">
         <div className="bg-[#0F172A]/90 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-4 sm:p-7 border border-slate-800 shadow-xl">
-          <span className="text-[10px] sm:text-xs font-mono font-bold text-slate-400 uppercase tracking-widest block">Total Compétiteurs</span>
+          <span className="text-[10px] sm:text-xs font-mono font-bold text-slate-400 uppercase tracking-widest block">[TOTAL_COMPETITORS]</span>
           <span className="font-mono font-black text-3xl sm:text-5xl text-white mt-1 sm:mt-2 block">{players.length}</span>
-          <span className="text-xs sm:text-sm text-emerald-400 font-medium mt-1 block">Inscrits aux tournois</span>
+          <span className="text-xs sm:text-sm text-emerald-400 font-mono mt-1 block">REGISTERED: ACTIVE</span>
         </div>
 
         <div className="bg-[#0F172A]/90 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-4 sm:p-7 border border-slate-800 shadow-xl">
-          <span className="text-[10px] sm:text-xs font-mono font-bold text-slate-400 uppercase tracking-widest block">Clubs Représentés</span>
+          <span className="text-[10px] sm:text-xs font-mono font-bold text-slate-400 uppercase tracking-widest block">[AFFILIATED_CLUBS]</span>
           <span className="font-mono font-black text-3xl sm:text-5xl text-amber-400 mt-1 sm:mt-2 block">{clubs.length || 1}</span>
-          <span className="text-xs sm:text-sm text-slate-400 font-medium mt-1 block">Ligue d'Annaba & National</span>
+          <span className="text-xs sm:text-sm text-slate-400 font-mono mt-1 block">LIGUE_ANNABA & NAT</span>
         </div>
 
         <div className="bg-[#0F172A]/90 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-4 sm:p-7 border border-slate-800 shadow-xl">
-          <span className="text-[10px] sm:text-xs font-mono font-bold text-slate-400 uppercase tracking-widest block">Moyenne Elo Estimée</span>
+          <span className="text-[10px] sm:text-xs font-mono font-bold text-slate-400 uppercase tracking-widest block">[AVERAGE_ELO_EST]</span>
           <span className="font-mono font-black text-3xl sm:text-5xl text-red-400 mt-1 sm:mt-2 block">
             {players.length > 0
               ? Math.round(players.reduce((acc, p) => acc + (p.rating || 1500), 0) / players.length)
               : 1750}
           </span>
-          <span className="text-xs sm:text-sm text-emerald-400 font-medium mt-1 block">Système de classement FIDE</span>
+          <span className="text-xs sm:text-sm text-emerald-400 font-mono mt-1 block">FIDE_RATING_SYSTEM</span>
         </div>
       </div>
 
@@ -138,11 +138,11 @@ export const VercelJoueursPage: React.FC = () => {
               <select
                 value={selectedClub}
                 onChange={(e) => setSelectedClub(e.target.value)}
-                className="w-full sm:w-auto px-3 py-2 sm:px-4 sm:py-3 rounded-xl bg-[#070A10] border border-slate-700 text-white text-xs sm:text-sm font-semibold focus:border-red-500 outline-none"
+                className="w-full sm:w-auto px-3 py-2 sm:px-4 sm:py-3 rounded-xl bg-[#070A10] border border-slate-700 text-white text-xs sm:text-sm font-mono font-semibold focus:border-red-500 outline-none"
               >
-                <option value="ALL">Tous les clubs</option>
+                <option value="ALL">TOUS LES CLUBS</option>
                 {clubs.map((c) => (
-                  <option key={c} value={c}>{c}</option>
+                  <option key={c} value={c}>{c.toUpperCase()}</option>
                 ))}
               </select>
             </div>
@@ -151,29 +151,29 @@ export const VercelJoueursPage: React.FC = () => {
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as any)}
-              className="w-full sm:w-auto px-3 py-2 sm:px-4 sm:py-3 rounded-xl bg-[#070A10] border border-slate-700 text-white text-xs sm:text-sm font-semibold focus:border-red-500 outline-none"
+              className="w-full sm:w-auto px-3 py-2 sm:px-4 sm:py-3 rounded-xl bg-[#070A10] border border-slate-700 text-white text-xs sm:text-sm font-mono font-semibold focus:border-red-500 outline-none"
             >
-              <option value="rating">Trier par Elo (Décroissant)</option>
-              <option value="name">Trier par Nom</option>
-              <option value="bib">Trier par Dossard</option>
+              <option value="rating">TRI : ELO (DESC)</option>
+              <option value="name">TRI : NOM (A-Z)</option>
+              <option value="bib">TRI : DOSSARD</option>
             </select>
           </div>
         </div>
 
-        {/* Players Table - Isolated Scroll */}
+        {/* Players Table - SSENSE Style Isolated Scroll */}
         <div className="w-full overflow-hidden rounded-xl sm:rounded-2xl border border-slate-800">
           <div className="w-full overflow-x-auto">
             <table className="w-full text-left text-xs sm:text-sm text-slate-200 font-sans min-w-[650px]">
-              <thead className="bg-[#070A10] text-slate-400 uppercase text-[11px] font-mono border-b border-slate-800">
+              <thead className="bg-[#070A10] text-slate-400 uppercase text-[10px] sm:text-[11px] font-mono border-b border-slate-800 tracking-wider">
                 <tr>
-                  <th className="p-3 sm:p-4">Dossard</th>
-                  <th className="p-3 sm:p-4">Joueur</th>
-                  <th className="p-3 sm:p-4">Sexe</th>
-                  <th className="p-3 sm:p-4">Club Affilié</th>
-                  <th className="p-3 sm:p-4">FIDE ID</th>
-                  <th className="p-3 sm:p-4">Cote Elo</th>
-                  <th className="p-3 sm:p-4">Tournoi</th>
-                  <th className="p-3 sm:p-4 text-right">Statut</th>
+                  <th className="p-3 sm:p-4">[BIB]</th>
+                  <th className="p-3 sm:p-4">[COMPETITOR]</th>
+                  <th className="p-3 sm:p-4">[SEX]</th>
+                  <th className="p-3 sm:p-4">[AFFILIATED_CLUB]</th>
+                  <th className="p-3 sm:p-4">[FIDE_ID]</th>
+                  <th className="p-3 sm:p-4">[RATING_ELO]</th>
+                  <th className="p-3 sm:p-4">[ASSIGNED_TOURNAMENT]</th>
+                  <th className="p-3 sm:p-4 text-right">[STATUS]</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-800 bg-[#0F172A]/50">
@@ -181,7 +181,7 @@ export const VercelJoueursPage: React.FC = () => {
                   filteredPlayers.map((player) => (
                     <tr key={player.id} className="hover:bg-slate-800/60 transition-colors">
                       <td className="p-3 sm:p-4 font-mono font-black text-amber-400 text-sm sm:text-base">
-                        #{player.bib_number}
+                        #{player.bib_number < 10 ? `0${player.bib_number}` : player.bib_number}
                       </td>
                       <td className="p-3 sm:p-4 whitespace-nowrap">
                         <div className="font-bold text-white text-sm sm:text-base">
@@ -195,9 +195,9 @@ export const VercelJoueursPage: React.FC = () => {
                         {player.sex}
                       </td>
                       <td className="p-3 sm:p-4 whitespace-nowrap">
-                        <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded bg-slate-900 border border-slate-700 text-white font-medium text-[11px]">
+                        <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded bg-slate-900 border border-slate-700 text-white font-mono font-medium text-[11px]">
                           <Shield className="w-3 h-3 text-red-500" />
-                          <span>{player.club || 'Hamra Annaba'}</span>
+                          <span>{player.club ? player.club.toUpperCase() : 'HAMRA ANNABA'}</span>
                         </div>
                       </td>
                       <td className="p-3 sm:p-4 font-mono font-bold text-amber-300 whitespace-nowrap">
@@ -212,26 +212,26 @@ export const VercelJoueursPage: React.FC = () => {
                             <span className="text-[10px] text-slate-400">↗</span>
                           </a>
                         ) : (
-                          <span className="text-slate-500">Non classé</span>
+                          <span className="text-slate-500 font-mono">UNRATED</span>
                         )}
                       </td>
                       <td className="p-3 sm:p-4 font-mono font-black text-sm sm:text-base text-emerald-400">
-                        {player.rating ? player.rating : '1499 (Est.)'}
+                        {player.rating ? player.rating : '1499 (EST)'}
                       </td>
                       <td className="p-3 sm:p-4 text-xs text-slate-300 truncate max-w-[180px] whitespace-nowrap">
                         {getTournamentName(player.tournament_id)}
                       </td>
                       <td className="p-3 sm:p-4 text-right whitespace-nowrap">
-                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-mono font-bold bg-emerald-950/70 text-emerald-300 border border-emerald-500/50">
-                          <UserCheck className="w-3 h-3" /> Validé
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] sm:text-[11px] font-mono font-bold bg-emerald-950/70 text-emerald-300 border border-emerald-500/50">
+                          <UserCheck className="w-3 h-3" /> VERIFIED
                         </span>
                       </td>
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={8} className="p-8 text-center text-slate-400 text-sm">
-                      Aucun joueur ne correspond aux critères de recherche.
+                    <td colSpan={8} className="p-8 text-center text-slate-400 text-sm font-mono">
+                      NO_COMPETITOR_FOUND // RECHERCHE_VIDE
                     </td>
                   </tr>
                 )}
