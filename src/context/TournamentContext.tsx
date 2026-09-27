@@ -13,6 +13,7 @@ interface TournamentContextType {
   addPlayerDirect: (playerData: Omit<PlayerRegistration, 'id' | 'bib_number' | 'created_at'>) => PlayerRegistration | null;
   updatePlayer: (playerId: string, updatedData: Partial<PlayerRegistration>) => void;
   deletePlayer: (playerId: string) => void;
+  resetToDemo: () => void;
 }
 
 const INITIAL_TOURNAMENTS: Tournament[] = [
@@ -94,21 +95,46 @@ const TournamentContext = createContext<TournamentContextType | undefined>(undef
 
 export const TournamentProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [tournaments, setTournaments] = useState<Tournament[]>(() => {
-    const saved = localStorage.getItem('hamra_tournaments');
-    return saved ? JSON.parse(saved) : INITIAL_TOURNAMENTS;
+    try {
+      const saved = localStorage.getItem('hamra_tournaments');
+      if (saved !== null) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) return parsed;
+      }
+    } catch (e) {
+      console.error("Error reading hamra_tournaments from localStorage:", e);
+    }
+    return INITIAL_TOURNAMENTS;
   });
 
   const [players, setPlayers] = useState<PlayerRegistration[]>(() => {
-    const saved = localStorage.getItem('hamra_players');
-    return saved ? JSON.parse(saved) : INITIAL_PLAYERS;
+    try {
+      const saved = localStorage.getItem('hamra_players');
+      if (saved !== null) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) return parsed;
+      }
+    } catch (e) {
+      console.error("Error reading hamra_players from localStorage:", e);
+    }
+    return INITIAL_PLAYERS;
   });
 
+  // Sync to localStorage
   useEffect(() => {
-    localStorage.setItem('hamra_tournaments', JSON.stringify(tournaments));
+    try {
+      localStorage.setItem('hamra_tournaments', JSON.stringify(tournaments));
+    } catch (e) {
+      console.error("localStorage error:", e);
+    }
   }, [tournaments]);
 
   useEffect(() => {
-    localStorage.setItem('hamra_players', JSON.stringify(players));
+    try {
+      localStorage.setItem('hamra_players', JSON.stringify(players));
+    } catch (e) {
+      console.error("localStorage error:", e);
+    }
   }, [players]);
 
   const getTournamentBySlug = (slug: string) => {
@@ -138,10 +164,14 @@ export const TournamentProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       created_at: new Date().toISOString()
     };
 
-    setPlayers((prev) => [...prev, newPlayer]);
+    setPlayers((prev) => {
+      const updated = [...prev, newPlayer];
+      try { localStorage.setItem('hamra_players', JSON.stringify(updated)); } catch (e) {}
+      return updated;
+    });
 
-    setTournaments((prev) =>
-      prev.map((t) => {
+    setTournaments((prev) => {
+      const updated = prev.map((t) => {
         if (t.id === tournament.id) {
           const newConfirmed = t.confirmed_count + 1;
           const newSpots = Math.max(0, t.max_players - newConfirmed);
@@ -153,8 +183,10 @@ export const TournamentProvider: React.FC<{ children: React.ReactNode }> = ({ ch
           };
         }
         return t;
-      })
-    );
+      });
+      try { localStorage.setItem('hamra_tournaments', JSON.stringify(updated)); } catch (e) {}
+      return updated;
+    });
 
     return { success: true, bibNumber };
   };
@@ -176,10 +208,14 @@ export const TournamentProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       created_at: new Date().toISOString()
     };
 
-    setPlayers((prev) => [newPlayer, ...prev]);
+    setPlayers((prev) => {
+      const updated = [newPlayer, ...prev];
+      try { localStorage.setItem('hamra_players', JSON.stringify(updated)); } catch (e) {}
+      return updated;
+    });
 
-    setTournaments((prev) =>
-      prev.map((t) => {
+    setTournaments((prev) => {
+      const updated = prev.map((t) => {
         if (t.id === tournament.id) {
           const newConfirmed = t.confirmed_count + 1;
           const newSpots = Math.max(0, t.max_players - newConfirmed);
@@ -191,22 +227,26 @@ export const TournamentProvider: React.FC<{ children: React.ReactNode }> = ({ ch
           };
         }
         return t;
-      })
-    );
+      });
+      try { localStorage.setItem('hamra_tournaments', JSON.stringify(updated)); } catch (e) {}
+      return updated;
+    });
 
     return newPlayer;
   };
 
   // Update existing player
   const updatePlayer = (playerId: string, updatedData: Partial<PlayerRegistration>) => {
-    setPlayers((prev) =>
-      prev.map((p) => {
+    setPlayers((prev) => {
+      const updated = prev.map((p) => {
         if (p.id === playerId) {
           return { ...p, ...updatedData };
         }
         return p;
-      })
-    );
+      });
+      try { localStorage.setItem('hamra_players', JSON.stringify(updated)); } catch (e) {}
+      return updated;
+    });
   };
 
   // Delete player (and automatically recalculate tournament gauge)
@@ -214,10 +254,14 @@ export const TournamentProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     const playerToDelete = players.find((p) => p.id === playerId);
     if (!playerToDelete) return;
 
-    setPlayers((prev) => prev.filter((p) => p.id !== playerId));
+    setPlayers((prev) => {
+      const updated = prev.filter((p) => p.id !== playerId);
+      try { localStorage.setItem('hamra_players', JSON.stringify(updated)); } catch (e) {}
+      return updated;
+    });
 
-    setTournaments((prev) =>
-      prev.map((t) => {
+    setTournaments((prev) => {
+      const updated = prev.map((t) => {
         if (t.id === playerToDelete.tournament_id) {
           const newConfirmed = Math.max(0, t.confirmed_count - 1);
           const newSpots = Math.max(0, t.max_players - newConfirmed);
@@ -229,8 +273,10 @@ export const TournamentProvider: React.FC<{ children: React.ReactNode }> = ({ ch
           };
         }
         return t;
-      })
-    );
+      });
+      try { localStorage.setItem('hamra_tournaments', JSON.stringify(updated)); } catch (e) {}
+      return updated;
+    });
   };
 
   // Create new tournament
@@ -259,14 +305,19 @@ export const TournamentProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       }
     };
 
-    setTournaments((prev) => [created, ...prev]);
+    setTournaments((prev) => {
+      const updated = [created, ...prev];
+      try { localStorage.setItem('hamra_tournaments', JSON.stringify(updated)); } catch (e) {}
+      return updated;
+    });
+
     return created;
   };
 
   // Update existing tournament
   const updateTournament = (tournamentId: string, updatedData: Partial<Tournament>) => {
-    setTournaments((prev) =>
-      prev.map((t) => {
+    setTournaments((prev) => {
+      const updated = prev.map((t) => {
         if (t.id === tournamentId) {
           const maxPlayers = updatedData.max_players !== undefined ? updatedData.max_players : t.max_players;
           const confirmed = updatedData.confirmed_count !== undefined ? updatedData.confirmed_count : t.confirmed_count;
@@ -282,14 +333,34 @@ export const TournamentProvider: React.FC<{ children: React.ReactNode }> = ({ ch
           };
         }
         return t;
-      })
-    );
+      });
+      try { localStorage.setItem('hamra_tournaments', JSON.stringify(updated)); } catch (e) {}
+      return updated;
+    });
   };
 
   // Delete tournament (and cascade delete its registered players)
   const deleteTournament = (tournamentId: string) => {
-    setTournaments((prev) => prev.filter((t) => t.id !== tournamentId));
-    setPlayers((prev) => prev.filter((p) => p.tournament_id !== tournamentId));
+    setTournaments((prev) => {
+      const updated = prev.filter((t) => t.id !== tournamentId);
+      try { localStorage.setItem('hamra_tournaments', JSON.stringify(updated)); } catch (e) {}
+      return updated;
+    });
+    setPlayers((prev) => {
+      const updated = prev.filter((p) => p.tournament_id !== tournamentId);
+      try { localStorage.setItem('hamra_players', JSON.stringify(updated)); } catch (e) {}
+      return updated;
+    });
+  };
+
+  // Reset to default initial data
+  const resetToDemo = () => {
+    try {
+      localStorage.setItem('hamra_tournaments', JSON.stringify(INITIAL_TOURNAMENTS));
+      localStorage.setItem('hamra_players', JSON.stringify(INITIAL_PLAYERS));
+    } catch (e) {}
+    setTournaments(INITIAL_TOURNAMENTS);
+    setPlayers(INITIAL_PLAYERS);
   };
 
   return (
@@ -305,7 +376,8 @@ export const TournamentProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         deleteTournament,
         addPlayerDirect,
         updatePlayer,
-        deletePlayer
+        deletePlayer,
+        resetToDemo
       }}
     >
       {children}

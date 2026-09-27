@@ -19,11 +19,12 @@ export const ConfirmDeleteModal: React.FC<ConfirmDeleteModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-md">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-md">
       <div className="bg-[#0F172A] border border-red-500/40 rounded-2xl sm:rounded-3xl p-6 sm:p-8 max-w-md w-full space-y-5 shadow-2xl relative">
         <button
+          type="button"
           onClick={onCancel}
-          className="absolute top-4 right-4 p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+          className="absolute top-4 right-4 p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
         >
           <X className="w-5 h-5" />
         </button>
@@ -36,21 +37,23 @@ export const ConfirmDeleteModal: React.FC<ConfirmDeleteModalProps> = ({
           <h3 className="font-serif font-black text-xl sm:text-2xl text-white">
             {title}
           </h3>
-          <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+          <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-sans">
             {message}
           </p>
         </div>
 
         <div className="flex flex-col sm:flex-row gap-3 pt-2">
           <button
+            type="button"
             onClick={onCancel}
-            className="flex-1 py-3 px-4 rounded-xl btn-secondary text-xs sm:text-sm font-bold"
+            className="flex-1 py-3 px-4 rounded-xl btn-secondary text-xs sm:text-sm font-bold cursor-pointer"
           >
             Annuler
           </button>
           <button
+            type="button"
             onClick={onConfirm}
-            className="flex-1 py-3 px-4 rounded-xl bg-red-600 hover:bg-red-700 active:scale-95 text-white text-xs sm:text-sm font-bold transition-all shadow-lg shadow-red-600/30"
+            className="flex-1 py-3 px-4 rounded-xl bg-red-600 hover:bg-red-700 active:scale-95 text-white text-xs sm:text-sm font-bold transition-all shadow-lg shadow-red-600/30 cursor-pointer"
           >
             Confirmer la suppression
           </button>

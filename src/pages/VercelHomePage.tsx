@@ -1,10 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ShieldCheck, Award, Crown, Trophy, Sparkles, CheckCircle2, ChevronRight, BookOpen, Quote } from 'lucide-react';
 import { useTournaments } from '../context/TournamentContext';
+import { Tournament } from '../types/tournament';
 import { VercelTournamentCard } from '../components/VercelTournamentCard';
+import { EditTournamentModal } from '../components/modals/EditTournamentModal';
+import { ConfirmDeleteModal } from '../components/modals/ConfirmDeleteModal';
 
 export const VercelHomePage: React.FC = () => {
-  const { tournaments } = useTournaments();
+  const { tournaments, updateTournament, deleteTournament } = useTournaments();
+
+  const [editingTournament, setEditingTournament] = useState<Tournament | null>(null);
+  const [deletingTournament, setDeletingTournament] = useState<Tournament | null>(null);
 
   return (
     <div className="w-full max-w-full overflow-x-hidden min-h-screen pb-28 md:pb-20 bg-[#0A0E17]">
@@ -96,11 +102,24 @@ export const VercelHomePage: React.FC = () => {
         </div>
 
         {/* Tournaments Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 max-w-5xl mx-auto">
-          {tournaments.map((tournament) => (
-            <VercelTournamentCard key={tournament.id} tournament={tournament} />
-          ))}
-        </div>
+        {tournaments.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 max-w-5xl mx-auto">
+            {tournaments.map((tournament) => (
+              <VercelTournamentCard
+                key={tournament.id}
+                tournament={tournament}
+                onEdit={(t) => setEditingTournament(t)}
+                onDelete={(t) => setDeletingTournament(t)}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="max-w-xl mx-auto p-12 text-center bg-[#0F172A]/80 border border-slate-800 rounded-3xl space-y-4">
+            <Trophy className="w-12 h-12 text-slate-500 mx-auto" />
+            <h3 className="font-serif font-bold text-xl text-white">Aucun tournoi actif</h3>
+            <p className="text-slate-400 text-sm">Tous les tournois ont été supprimés ou archivés.</p>
+          </div>
+        )}
       </section>
 
       {/* Aesop-Inspired Editorial Heritage Block (Storytelling & Quiet Luxury) */}
@@ -164,6 +183,32 @@ export const VercelHomePage: React.FC = () => {
 
         </div>
       </section>
+
+      {/* Modals for Quick Edit & Delete from Homepage */}
+      {editingTournament && (
+        <EditTournamentModal
+          tournament={editingTournament}
+          isOpen={!!editingTournament}
+          onClose={() => setEditingTournament(null)}
+          onSave={(updated) => {
+            updateTournament(editingTournament.id, updated);
+            setEditingTournament(null);
+          }}
+        />
+      )}
+
+      {deletingTournament && (
+        <ConfirmDeleteModal
+          isOpen={!!deletingTournament}
+          title="Supprimer le tournoi"
+          message={`Êtes-vous certain de vouloir supprimer définitivement le tournoi "${deletingTournament.name}" ainsi que tous les joueurs inscrits associés ?`}
+          onConfirm={() => {
+            deleteTournament(deletingTournament.id);
+            setDeletingTournament(null);
+          }}
+          onCancel={() => setDeletingTournament(null)}
+        />
+      )}
 
     </div>
   );

@@ -1,9 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Calendar, MapPin, Clock, Users, ArrowRight } from 'lucide-react';
+import { Calendar, MapPin, Clock, Users, ArrowRight, Settings, Trash2 } from 'lucide-react';
 import { Tournament } from '../types/tournament';
 
-export const VercelTournamentCard: React.FC<{ tournament: Tournament }> = ({ tournament }) => {
+interface VercelTournamentCardProps {
+  tournament: Tournament;
+  onEdit?: (tournament: Tournament) => void;
+  onDelete?: (tournament: Tournament) => void;
+}
+
+export const VercelTournamentCard: React.FC<VercelTournamentCardProps> = ({
+  tournament,
+  onEdit,
+  onDelete
+}) => {
   const percentage = Math.min(100, Math.round((tournament.confirmed_count / tournament.max_players) * 100));
   const [animatedPercent, setAnimatedPercent] = useState(0);
 
@@ -20,12 +30,49 @@ export const VercelTournamentCard: React.FC<{ tournament: Tournament }> = ({ tou
       {/* Top Header Card */}
       <div className="p-5 sm:p-8 border-b border-slate-800/80 bg-gradient-to-b from-slate-900 to-[#0F172A]">
         <div className="flex flex-wrap items-center justify-between gap-2 mb-3 sm:mb-4">
-          <span className="text-[11px] sm:text-xs font-mono font-extrabold uppercase tracking-wider px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-lg sm:rounded-xl bg-red-950/60 text-red-300 border border-red-500/40 shadow-sm">
-            ⚡ {tournament.cadence}
-          </span>
-          <span className="text-[11px] sm:text-xs font-mono font-extrabold text-amber-300 bg-amber-950/60 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-lg sm:rounded-xl border border-amber-500/40 shadow-sm">
-            ♟️ {tournament.rounds} Rondes FIDE
-          </span>
+          <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+            <span className="text-[11px] sm:text-xs font-mono font-extrabold uppercase tracking-wider px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-lg sm:rounded-xl bg-red-950/60 text-red-300 border border-red-500/40 shadow-sm">
+              ⚡ {tournament.cadence}
+            </span>
+            <span className="text-[11px] sm:text-xs font-mono font-extrabold text-amber-300 bg-amber-950/60 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-lg sm:rounded-xl border border-amber-500/40 shadow-sm">
+              ♟️ {tournament.rounds} Rondes FIDE
+            </span>
+          </div>
+
+          {(onEdit || onDelete) && (
+            <div className="flex items-center gap-1.5 ml-auto">
+              {onEdit && (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    onEdit(tournament);
+                  }}
+                  className="flex items-center gap-1 p-1.5 sm:px-2.5 sm:py-1 rounded-lg sm:rounded-xl bg-slate-800/90 text-slate-300 hover:text-amber-400 hover:bg-slate-700 text-xs font-bold transition-all shadow-md cursor-pointer border border-slate-700"
+                  title="Modifier ce tournoi"
+                >
+                  <Settings className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">Modifier</span>
+                </button>
+              )}
+              {onDelete && (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    onDelete(tournament);
+                  }}
+                  className="flex items-center gap-1 p-1.5 sm:px-2.5 sm:py-1 rounded-lg sm:rounded-xl bg-red-950/70 text-red-400 hover:text-white hover:bg-red-600 text-xs font-bold transition-all shadow-md cursor-pointer border border-red-500/30"
+                  title="Supprimer définitivement ce tournoi"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">Supprimer</span>
+                </button>
+              )}
+            </div>
+          )}
         </div>
         
         <h3 className="font-serif font-black text-xl sm:text-3xl text-white group-hover:text-amber-400 transition-colors leading-tight break-words">

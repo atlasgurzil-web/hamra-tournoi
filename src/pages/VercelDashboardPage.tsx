@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { LayoutDashboard, Users, Trophy, Download, CirclePlus, CheckCircle2, ShieldCheck, Search, Filter, Edit, Trash2, UserPlus, Settings } from 'lucide-react';
+import { LayoutDashboard, Users, Trophy, Download, CirclePlus, CheckCircle2, ShieldCheck, Search, Filter, Edit, Trash2, UserPlus, Settings, RotateCcw } from 'lucide-react';
 import { useTournaments } from '../context/TournamentContext';
 import { Tournament, PlayerRegistration } from '../types/tournament';
 import { EditPlayerModal } from '../components/modals/EditPlayerModal';
@@ -18,7 +18,8 @@ export const VercelDashboardPage: React.FC = () => {
     deleteTournament,
     addPlayerDirect,
     updatePlayer,
-    deletePlayer
+    deletePlayer,
+    resetToDemo
   } = useTournaments();
 
   const [selectedTournamentId, setSelectedTournamentId] = useState<string>(tournaments[0]?.id || '');
@@ -26,11 +27,12 @@ export const VercelDashboardPage: React.FC = () => {
 
   // Modals state
   const [isAddTournamentOpen, setIsAddTournamentOpen] = useState(false);
+  const [editingTournament, setEditingTournament] = useState<Tournament | null>(null);
+  const [deletingTournament, setDeletingTournament] = useState<Tournament | null>(null);
+
   const [isAddPlayerOpen, setIsAddPlayerOpen] = useState(false);
   const [editingPlayer, setEditingPlayer] = useState<PlayerRegistration | null>(null);
   const [deletingPlayer, setDeletingPlayer] = useState<PlayerRegistration | null>(null);
-  const [isEditTournamentOpen, setIsEditTournamentOpen] = useState(false);
-  const [isDeleteTournamentOpen, setIsDeleteTournamentOpen] = useState(false);
 
   const currentTournament = tournaments.find((t) => t.id === selectedTournamentId) || tournaments[0];
   const tournamentPlayers = players.filter((p) => p.tournament_id === currentTournament?.id);
@@ -66,11 +68,11 @@ export const VercelDashboardPage: React.FC = () => {
   };
 
   const handleConfirmDeleteTournament = () => {
-    if (!currentTournament) return;
-    deleteTournament(currentTournament.id);
-    setIsDeleteTournamentOpen(false);
-    if (tournaments.length > 1) {
-      const remaining = tournaments.filter(t => t.id !== currentTournament.id);
+    if (!deletingTournament) return;
+    deleteTournament(deletingTournament.id);
+    setDeletingTournament(null);
+    if (selectedTournamentId === deletingTournament.id) {
+      const remaining = tournaments.filter(t => t.id !== deletingTournament.id);
       setSelectedTournamentId(remaining[0]?.id || '');
     }
   };
@@ -143,15 +145,138 @@ export const VercelDashboardPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Tournament Selector & Management Section */}
+      {/* SECTION 1: GESTION DIRECTE DES TOURNOIS (TABLE AVEC MODIFIER & SUPPRIMER) */}
+      <div className="bg-[#0F172A]/90 backdrop-blur-xl rounded-2xl sm:rounded-3xl border border-slate-800 p-4 sm:p-8 space-y-5 sm:space-y-6 shadow-2xl overflow-hidden">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
+          <div>
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-950/60 border border-amber-500/40 text-amber-300 text-[11px] font-mono font-bold uppercase tracking-wider mb-1">
+              <Trophy className="w-3.5 h-3.5 text-amber-400" />
+              <span>REGISTRE_OFFICIEL_DES_TOURNOIS</span>
+            </div>
+            <h2 className="font-serif font-black text-xl sm:text-2xl text-white">
+              Liste des Tournois Homologués ({tournaments.length})
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-400 mt-0.5">
+              Ajoutez, modifiez ou supprimez des compétitions en temps réel.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setIsAddTournamentOpen(true)}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl btn-hamra text-xs sm:text-sm font-bold shadow-md cursor-pointer"
+            >
+              <CirclePlus className="w-4 h-4" />
+              <span>Créer Tournoi</span>
+            </button>
+            <button
+              onClick={() => {
+                if (window.confirm("Voulez-vous réinitialiser les tournois aux données officielles par défaut ?")) {
+                  resetToDemo();
+                }
+              }}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-slate-400 hover:text-slate-200 text-xs font-mono transition-colors cursor-pointer"
+              title="Réinitialiser données démo"
+            >
+              <RotateCcw className="w-3 h-3" />
+              <span className="hidden sm:inline">Reset</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Table of Tournaments with explicit Edit and Delete per row */}
+        <div className="w-full overflow-hidden rounded-xl sm:rounded-2xl border border-slate-800">
+          <div className="w-full overflow-x-auto">
+            <table className="w-full text-left text-xs sm:text-sm text-slate-200 font-sans min-w-[720px]">
+              <thead className="bg-[#070A10] text-slate-400 uppercase text-[10px] sm:text-[11px] font-mono border-b border-slate-800 tracking-wider">
+                <tr>
+                  <th className="p-3 sm:p-4">[NOM DU TOURNOI]</th>
+                  <th className="p-3 sm:p-4">[DATES & HEURE]</th>
+                  <th className="p-3 sm:p-4">[LIEU & CADENCE]</th>
+                  <th className="p-3 sm:p-4">[PLACES & JAUGE]</th>
+                  <th className="p-3 sm:p-4">[STATUT]</th>
+                  <th className="p-3 sm:p-4 text-right">[ACTIONS]</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-800 bg-[#0F172A]/50">
+                {tournaments.length > 0 ? (
+                  tournaments.map((t) => (
+                    <tr key={t.id} className="hover:bg-slate-800/60 transition-colors">
+                      <td className="p-3 sm:p-4 whitespace-nowrap">
+                        <Link to={`/tournoi/${t.slug}`} className="font-bold text-white hover:text-amber-400 transition-colors text-sm sm:text-base">
+                          {t.name}
+                        </Link>
+                        <div className="text-[11px] text-slate-400 font-mono mt-0.5 truncate max-w-xs">
+                          {t.description.slice(0, 60)}...
+                        </div>
+                      </td>
+                      <td className="p-3 sm:p-4 text-xs font-mono text-slate-300 whitespace-nowrap">
+                        <div className="font-bold text-white">{t.start_date}</div>
+                        <div className="text-[11px] text-slate-400">Pointage : {t.start_time}</div>
+                      </td>
+                      <td className="p-3 sm:p-4 text-xs text-slate-300 whitespace-nowrap">
+                        <div className="text-white font-medium">{t.location}</div>
+                        <div className="text-[11px] text-amber-400 font-mono font-bold">{t.cadence} • {t.rounds} rondes</div>
+                      </td>
+                      <td className="p-3 sm:p-4 font-mono whitespace-nowrap">
+                        <div className="flex items-center gap-2">
+                          <span className="font-bold text-white">{t.confirmed_count}/{t.max_players}</span>
+                          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${t.spots_left > 0 ? 'bg-emerald-950/70 text-emerald-400 border border-emerald-500/40' : 'bg-red-950/70 text-red-400 border border-red-500/40'}`}>
+                            {t.spots_left > 0 ? `${t.spots_left} rest.` : 'Complet'}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="p-3 sm:p-4 whitespace-nowrap">
+                        <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-slate-900 border border-slate-700 text-slate-300">
+                          {t.status}
+                        </span>
+                      </td>
+                      <td className="p-3 sm:p-4 text-right whitespace-nowrap">
+                        <div className="flex items-center justify-end gap-1.5">
+                          <button
+                            type="button"
+                            onClick={() => setEditingTournament(t)}
+                            className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-slate-800 text-slate-200 hover:text-amber-400 hover:bg-slate-700 text-xs font-bold transition-colors cursor-pointer border border-slate-700"
+                            title="Modifier ce tournoi"
+                          >
+                            <Settings className="w-3.5 h-3.5 text-amber-400" />
+                            <span className="hidden sm:inline">Modifier</span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setDeletingTournament(t)}
+                            className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-red-950/60 text-red-400 hover:text-white hover:bg-red-600 text-xs font-bold transition-colors cursor-pointer border border-red-500/30"
+                            title="Supprimer ce tournoi"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                            <span className="hidden sm:inline">Supprimer</span>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={6} className="p-8 text-center text-slate-400 text-sm font-mono">
+                      AUCUN_TOURNOI_ACTIF // CLIQUEZ_SUR_NOUVEAU_TOURNOI
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      {/* SECTION 2: GESTION DES JOUEURS DU TOURNOI */}
       <div className="bg-[#0F172A]/90 backdrop-blur-xl rounded-2xl sm:rounded-3xl border border-slate-800 p-4 sm:p-8 space-y-5 sm:space-y-8 shadow-2xl overflow-hidden">
         
-        {/* Tournament Bar with Edit / Delete actions */}
+        {/* Tournament Selector for Player Table */}
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 sm:pb-6 border-b border-slate-800">
           <div>
             <div className="flex items-center gap-3">
               <h2 className="font-serif font-black text-xl sm:text-3xl text-white">
-                {currentTournament ? currentTournament.name : "Sélectionner un tournoi"}
+                {currentTournament ? `Inscrits : ${currentTournament.name}` : "Sélectionner un tournoi"}
               </h2>
             </div>
             <p className="text-xs sm:text-sm text-slate-400 mt-0.5 font-medium">
@@ -172,28 +297,6 @@ export const VercelDashboardPage: React.FC = () => {
               ))}
             </select>
 
-            {currentTournament && (
-              <>
-                <button
-                  onClick={() => setIsEditTournamentOpen(true)}
-                  className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-slate-200 hover:text-white hover:bg-slate-850 text-xs font-bold transition-colors cursor-pointer"
-                  title="Modifier les critères techniques du tournoi"
-                >
-                  <Settings className="w-3.5 h-3.5 text-amber-400" />
-                  <span>Modifier</span>
-                </button>
-
-                <button
-                  onClick={() => setIsDeleteTournamentOpen(true)}
-                  className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-red-950/40 border border-red-500/30 text-red-400 hover:bg-red-900/50 hover:text-red-200 text-xs font-bold transition-colors cursor-pointer"
-                  title="Supprimer définitivement ce tournoi"
-                >
-                  <Trash2 className="w-3.5 h-3.5" />
-                  <span>Supprimer</span>
-                </button>
-              </>
-            )}
-
             <button
               onClick={handleExportCSV}
               className="flex items-center justify-center gap-2 px-4 py-2 rounded-xl btn-gold text-xs sm:text-sm font-bold shadow-lg cursor-pointer"
@@ -210,7 +313,7 @@ export const VercelDashboardPage: React.FC = () => {
             <Search className="w-4 h-4 sm:w-5 sm:h-5 text-slate-400 absolute left-3.5 sm:left-4 top-1/2 -translate-y-1/2" />
             <input
               type="text"
-              placeholder="Rechercher par nom, club ou ID FIDE... (ex: 7981600)"
+              placeholder="Rechercher un inscrit par nom, club ou ID FIDE... (ex: 7981600)"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-10 sm:pl-12 pr-4 py-2.5 sm:py-3 rounded-xl bg-[#070A10] border border-slate-700 text-white text-xs sm:text-sm placeholder-slate-500 focus:border-red-500 outline-none"
@@ -248,15 +351,21 @@ export const VercelDashboardPage: React.FC = () => {
                       <td className="p-3 sm:p-4 font-mono font-black text-amber-400 text-sm sm:text-base">
                         #{player.bib_number < 10 ? `0${player.bib_number}` : player.bib_number}
                       </td>
-                      <td className="p-3 sm:p-4 font-bold text-white text-sm sm:text-base whitespace-nowrap">
-                        {player.last_name.toUpperCase()} {player.first_name}
+                      <td className="p-3 sm:p-4 whitespace-nowrap">
+                        <div className="font-bold text-white text-sm sm:text-base">
+                          {player.last_name.toUpperCase()} {player.first_name}
+                        </div>
+                        <div className="text-[11px] text-slate-400 font-mono mt-0.5">
+                          Né(e) en {player.birth_date ? player.birth_date.split('-')[0] : '—'} • {player.sex}
+                        </div>
                       </td>
-                      <td className="p-3 sm:p-4 text-slate-300 whitespace-nowrap">
-                        <span className="px-2.5 py-0.5 rounded bg-slate-900 border border-slate-700 text-[11px] font-mono font-semibold">
-                          {player.club || 'INDEPENDANT'}
-                        </span>
+                      <td className="p-3 sm:p-4 whitespace-nowrap">
+                        <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded bg-slate-900 border border-slate-700 text-white font-mono font-medium text-[11px]">
+                          <ShieldCheck className="w-3 h-3 text-red-500" />
+                          <span>{player.club ? player.club.toUpperCase() : 'HAMRA ANNABA'}</span>
+                        </div>
                       </td>
-                      <td className="p-3 sm:p-4 font-mono font-bold text-amber-300">
+                      <td className="p-3 sm:p-4 font-mono font-bold text-amber-300 whitespace-nowrap">
                         {player.fide_id ? (
                           <a
                             href={`https://ratings.fide.com/profile/${player.fide_id}`}
@@ -272,25 +381,25 @@ export const VercelDashboardPage: React.FC = () => {
                         )}
                       </td>
                       <td className="p-3 sm:p-4 font-mono font-black text-sm sm:text-base text-emerald-400">
-                        {player.rating ? player.rating : '0 (NC)'}
+                        {player.rating ? player.rating : '1499 (EST)'}
                       </td>
                       <td className="p-3 sm:p-4 whitespace-nowrap">
-                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-950/70 text-emerald-300 border border-emerald-500/50">
-                          <CheckCircle2 className="w-3 h-3" /> CONFIRMED
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] sm:text-[11px] font-mono font-bold bg-emerald-950/70 text-emerald-300 border border-emerald-500/50">
+                          <CheckCircle2 className="w-3 h-3" /> VERIFIED
                         </span>
                       </td>
                       <td className="p-3 sm:p-4 text-right whitespace-nowrap">
                         <div className="flex items-center justify-end gap-1.5">
                           <button
                             onClick={() => setEditingPlayer(player)}
-                            className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors cursor-pointer"
+                            className="p-1.5 sm:p-2 rounded-lg bg-slate-800 text-slate-300 hover:text-amber-400 hover:bg-slate-750 transition-colors cursor-pointer"
                             title="Modifier ce joueur"
                           >
                             <Edit className="w-3.5 h-3.5" />
                           </button>
                           <button
                             onClick={() => setDeletingPlayer(player)}
-                            className="p-1.5 rounded-lg bg-red-950/60 hover:bg-red-900/80 text-red-400 hover:text-red-200 transition-colors cursor-pointer"
+                            className="p-1.5 sm:p-2 rounded-lg bg-red-950/40 text-red-400 hover:text-red-200 hover:bg-red-900/50 transition-colors cursor-pointer"
                             title="Supprimer ce joueur"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
@@ -302,7 +411,7 @@ export const VercelDashboardPage: React.FC = () => {
                 ) : (
                   <tr>
                     <td colSpan={7} className="p-8 text-center text-slate-400 text-sm font-mono">
-                      NO_PLAYERS_FOUND // AUCUN_JOUEUR_INSCRIT
+                      AUCUN_JOUEUR_INSCRIT_POUR_CE_TOURNOI
                     </td>
                   </tr>
                 )}
@@ -313,16 +422,14 @@ export const VercelDashboardPage: React.FC = () => {
 
       </div>
 
-      {/* Modals for CRUD */}
-      {isAddPlayerOpen && (
-        <AddPlayerModal
-          tournaments={tournaments}
-          defaultTournamentId={currentTournament?.id}
-          isOpen={isAddPlayerOpen}
-          onClose={() => setIsAddPlayerOpen(false)}
-          onAdd={(data) => addPlayerDirect(data)}
-        />
-      )}
+      {/* Modals for Players and Tournaments */}
+      <AddPlayerModal
+        tournaments={tournaments}
+        defaultTournamentId={currentTournament?.id}
+        isOpen={isAddPlayerOpen}
+        onClose={() => setIsAddPlayerOpen(false)}
+        onAdd={(data) => addPlayerDirect(data)}
+      />
 
       {editingPlayer && (
         <EditPlayerModal
@@ -349,22 +456,25 @@ export const VercelDashboardPage: React.FC = () => {
         />
       )}
 
-      {currentTournament && isEditTournamentOpen && (
+      {editingTournament && (
         <EditTournamentModal
-          tournament={currentTournament}
-          isOpen={isEditTournamentOpen}
-          onClose={() => setIsEditTournamentOpen(false)}
-          onSave={(updated) => updateTournament(currentTournament.id, updated)}
+          tournament={editingTournament}
+          isOpen={Boolean(editingTournament)}
+          onClose={() => setEditingTournament(null)}
+          onSave={(updated) => {
+            updateTournament(editingTournament.id, updated);
+            setEditingTournament(null);
+          }}
         />
       )}
 
-      {currentTournament && isDeleteTournamentOpen && (
+      {deletingTournament && (
         <ConfirmDeleteModal
-          isOpen={isDeleteTournamentOpen}
+          isOpen={Boolean(deletingTournament)}
           title="Supprimer le tournoi"
-          message={`Êtes-vous certain de vouloir supprimer définitivement le tournoi "${currentTournament.name}" ainsi que tous les joueurs inscrits associés ?`}
+          message={`Êtes-vous certain de vouloir supprimer définitivement le tournoi "${deletingTournament.name}" ainsi que tous les joueurs inscrits associés ?`}
           onConfirm={handleConfirmDeleteTournament}
-          onCancel={() => setIsDeleteTournamentOpen(false)}
+          onCancel={() => setDeletingTournament(null)}
         />
       )}
 
