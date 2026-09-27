@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://hamra-annaba-echecs.dz/sitemap.xml
