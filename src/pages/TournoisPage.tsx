@@ -6,6 +6,7 @@ import { TournamentCard } from '../components/cards/TournamentCard';
 import { RegistrationModal } from '../components/ui/RegistrationModal';
 import { tournamentsData } from '../data/tournamentsData';
 import { CadenceType, TournamentStatus, Tournament } from '../types';
+import { Zap, Timer, Crown } from 'lucide-react';
 
 export const TournoisPage: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState<'all' | TournamentStatus>('all');
@@ -25,7 +26,7 @@ export const TournoisPage: React.FC = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 space-y-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8">
       <SeoHead
         title="Tournois & Compétitions"
         description="Calendrier des tournois d'échecs organisés par Hamra Annaba : Blitz, Rapide, Classique homologués FIDE et inscriptions en ligne."
@@ -33,37 +34,37 @@ export const TournoisPage: React.FC = () => {
 
       <Breadcrumbs items={[{ label: "Tournois" }]} />
 
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-slate-800">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-[#2A2823]">
         <SectionTitle
           badge="Compétitions Officielles"
           title="Tournois & Opens d'Échecs"
           subtitle="Consultez les tournois programmés, règlements complets et grilles de résultats."
         />
 
-        {/* Filters */}
-        <div className="flex flex-wrap items-center gap-2">
+        {/* Filters in Claude Warm Obsidian Style */}
+        <div className="flex flex-wrap items-center gap-3">
           {/* Status Filters */}
-          <div className="flex rounded-xl bg-slate-900 p-1 border border-slate-800">
+          <div className="flex rounded-xl bg-[#1E1D1A] p-1 border border-[#2E2C27]">
             <button
               onClick={() => setStatusFilter('all')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                statusFilter === 'all' ? 'bg-hamra-600 text-white' : 'text-slate-400 hover:text-white'
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                statusFilter === 'all' ? 'bg-[#D97757] text-white font-semibold' : 'text-[#9C968B] hover:text-[#F5F2EB]'
               }`}
             >
               Tous
             </button>
             <button
               onClick={() => setStatusFilter('upcoming')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                statusFilter === 'upcoming' ? 'bg-hamra-600 text-white' : 'text-slate-400 hover:text-white'
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                statusFilter === 'upcoming' ? 'bg-[#D97757] text-white font-semibold' : 'text-[#9C968B] hover:text-[#F5F2EB]'
               }`}
             >
               À venir
             </button>
             <button
               onClick={() => setStatusFilter('completed')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                statusFilter === 'completed' ? 'bg-hamra-600 text-white' : 'text-slate-400 hover:text-white'
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                statusFilter === 'completed' ? 'bg-[#D97757] text-white font-semibold' : 'text-[#9C968B] hover:text-[#F5F2EB]'
               }`}
             >
               Terminés
@@ -71,38 +72,41 @@ export const TournoisPage: React.FC = () => {
           </div>
 
           {/* Cadence Filters */}
-          <div className="flex rounded-xl bg-slate-900 p-1 border border-slate-800">
+          <div className="flex rounded-xl bg-[#1E1D1A] p-1 border border-[#2E2C27]">
             <button
               onClick={() => setCadenceFilter('all')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                cadenceFilter === 'all' ? 'bg-slate-700 text-white' : 'text-slate-400 hover:text-white'
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                cadenceFilter === 'all' ? 'bg-[#2E2C27] text-[#F5F2EB] font-semibold' : 'text-[#9C968B] hover:text-[#F5F2EB]'
               }`}
             >
               Toutes cadences
             </button>
             <button
               onClick={() => setCadenceFilter('Blitz')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                cadenceFilter === 'Blitz' ? 'bg-amber-600 text-white' : 'text-slate-400 hover:text-white'
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                cadenceFilter === 'Blitz' ? 'bg-[#2A2318] text-[#E6C594] font-semibold border border-[#D4A373]/30' : 'text-[#9C968B] hover:text-[#F5F2EB]'
               }`}
             >
-              Blitz ⚡
+              <Zap className="w-3.5 h-3.5 text-[#D4A373]" />
+              <span>Blitz</span>
             </button>
             <button
               onClick={() => setCadenceFilter('Rapide')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                cadenceFilter === 'Rapide' ? 'bg-hamra-600 text-white' : 'text-slate-400 hover:text-white'
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                cadenceFilter === 'Rapide' ? 'bg-[#2B1F19] text-[#E2896B] font-semibold border border-[#D97757]/30' : 'text-[#9C968B] hover:text-[#F5F2EB]'
               }`}
             >
-              Rapide ⏱️
+              <Timer className="w-3.5 h-3.5 text-[#D97757]" />
+              <span>Rapide</span>
             </button>
             <button
               onClick={() => setCadenceFilter('Classique')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                cadenceFilter === 'Classique' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                cadenceFilter === 'Classique' ? 'bg-[#1E2328] text-[#93C5FD] font-semibold border border-[#3B82F6]/30' : 'text-[#9C968B] hover:text-[#F5F2EB]'
               }`}
             >
-              Classique ♟️
+              <Crown className="w-3.5 h-3.5 text-[#60A5FA]" />
+              <span>Classique</span>
             </button>
           </div>
         </div>
@@ -120,11 +124,11 @@ export const TournoisPage: React.FC = () => {
           ))}
         </div>
       ) : (
-        <div className="text-center py-16 bg-slate-900 rounded-3xl border border-slate-800 p-8 space-y-3">
-          <p className="text-slate-400 text-sm">Aucun tournoi ne correspond aux filtres sélectionnés.</p>
+        <div className="text-center py-16 bg-[#1E1D1A] rounded-3xl border border-[#2E2C27] p-8 space-y-3">
+          <p className="text-[#9C968B] text-sm">Aucun tournoi ne correspond aux filtres sélectionnés.</p>
           <button
             onClick={() => { setStatusFilter('all'); setCadenceFilter('all'); }}
-            className="px-4 py-2 rounded-xl bg-slate-800 text-white text-xs font-bold hover:bg-slate-700"
+            className="px-4 py-2 rounded-xl btn-obsidian text-xs font-semibold"
           >
             Réinitialiser les filtres
           </button>

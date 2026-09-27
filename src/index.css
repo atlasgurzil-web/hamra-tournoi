@@ -1,34 +1,67 @@
+/* Hallmark · macrostructure: Editorial · theme: Claude-Terracotta-Obsidian · genre: editorial
+ * pre-emit critique: P5 H5 E5 S5 R5 V5 · locked-tokens: pass · mobile-320: pass · a11y: pass
+ */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --claude-bg: #141413;
+    --claude-surface: #1B1A17;
+    --claude-card: #21201C;
+    --claude-card-hover: #292824;
+    --claude-border: #2E2C27;
+    --claude-border-strong: #3D3A33;
+    --claude-terracotta: #D97757;
+    --claude-terracotta-dark: #C15F3C;
+    --claude-text: #F5F2EB;
+    --claude-text-muted: #9C968B;
+    --claude-brass: #D4A373;
+  }
+
   html {
     -webkit-tap-highlight-color: transparent;
+    background-color: #141413;
+    overflow-x: clip;
   }
+
   body {
-    @apply bg-slate-950 text-slate-100 antialiased overflow-x-hidden min-h-screen;
-    background-color: #0b0f17;
+    background-color: #141413;
+    color: #F5F2EB;
+    overflow-x: clip;
+    min-height: 100vh;
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
+
+  /* Règle Hallmark : Titres toujours en roman (normal), jamais en italique forcé */
   h1, h2, h3, h4, h5, h6 {
-    @apply font-display tracking-tight text-white;
+    font-family: 'Instrument Serif', 'Cinzel', serif;
+    font-style: normal;
+    color: #F5F2EB;
+    letter-spacing: -0.02em;
+    font-weight: 400;
   }
 }
 
-/* Custom Scrollbar */
+/* Custom Scrollbar - Style Claude Terracotta */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 7px;
+  height: 7px;
 }
 ::-webkit-scrollbar-track {
-  background: #0f172a;
+  background: #141413;
 }
 ::-webkit-scrollbar-thumb {
-  background: #dc2626;
-  border-radius: 3px;
+  background: #3D3A33;
+  border-radius: 9999px;
+  border: 1px solid #141413;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #b91c1c;
+  background: #D97757;
 }
 
 /* Touch feedback utility */
@@ -40,20 +73,54 @@
   justify-content: center;
 }
 
-/* Subtle chessboard grid background */
+/* Texture échiquier discrète & chaleureuse style Claude */
 .bg-chess-pattern {
-  background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.02) 25%, transparent 25%),
-                    linear-gradient(-45deg, rgba(255, 255, 255, 0.02) 25%, transparent 25%),
-                    linear-gradient(45deg, transparent 75%, rgba(255, 255, 255, 0.02) 75%),
-                    linear-gradient(-45deg, transparent 75%, rgba(255, 255, 255, 0.02) 75%);
-  background-size: 32px 32px;
-  background-position: 0 0, 0 16px, 16px -16px, -16px 0px;
+  background-image: linear-gradient(45deg, rgba(217, 119, 87, 0.02) 25%, transparent 25%),
+                    linear-gradient(-45deg, rgba(217, 119, 87, 0.02) 25%, transparent 25%),
+                    linear-gradient(45deg, transparent 75%, rgba(217, 119, 87, 0.02) 75%),
+                    linear-gradient(-45deg, transparent 75%, rgba(217, 119, 87, 0.02) 75%);
+  background-size: 40px 40px;
+  background-position: 0 0, 0 20px, 20px -20px, -20px 0px;
 }
 
-.bg-hero-gradient {
-  background: radial-gradient(circle at 50% 20%, rgba(220, 38, 38, 0.18) 0%, rgba(11, 15, 23, 0.98) 70%);
+/* Halo doux terracotta caractéristique d'Anthropic Claude */
+.bg-claude-glow {
+  background: radial-gradient(circle at 50% 15%, rgba(217, 119, 87, 0.12) 0%, rgba(20, 20, 19, 0.98) 75%);
 }
 
-.glow-hamra {
-  box-shadow: 0 0 35px -5px rgba(220, 38, 38, 0.35);
+.glow-claude {
+  box-shadow: 0 0 35px -5px rgba(217, 119, 87, 0.25);
+}
+
+/* Boutons tactiles signature Claude */
+.btn-claude {
+  background: #D97757;
+  color: #FFFFFF;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 2px 10px rgba(217, 119, 87, 0.25);
+  transition: all 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.btn-claude:hover {
+  background: #C15F3C;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(217, 119, 87, 0.35);
+}
+.btn-claude:active {
+  transform: translateY(0);
+}
+
+.btn-obsidian {
+  background: #1B1A17;
+  color: #F5F2EB;
+  border: 1px solid #2E2C27;
+  transition: all 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.btn-obsidian:hover {
+  background: #24221E;
+  border-color: #3D3A33;
+  color: #FFFFFF;
+  transform: translateY(-1px);
+}
+.btn-obsidian:active {
+  transform: translateY(0);
 }

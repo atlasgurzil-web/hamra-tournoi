@@ -1,22 +1,28 @@
 import React from 'react';
 import { CadenceType, TournamentStatus } from '../../types';
+import { Zap, Timer, Crown, CheckCircle2, Clock } from 'lucide-react';
 
 export const CadenceBadge: React.FC<{ cadence: CadenceType }> = ({ cadence }) => {
   const styles = {
-    Blitz: "bg-amber-950/80 text-amber-300 border-amber-800/60",
-    Rapide: "bg-hamra-950/80 text-hamra-300 border-hamra-800/60",
-    Classique: "bg-blue-950/80 text-blue-300 border-blue-800/60",
+    Blitz: "bg-[#2A2318] text-[#E6C594] border-[#D4A373]/30",
+    Rapide: "bg-[#2B1F19] text-[#E2896B] border-[#D97757]/30",
+    Classique: "bg-[#1E2328] text-[#93C5FD] border-[#3B82F6]/30",
   };
 
-  const icons = {
-    Blitz: "⚡",
-    Rapide: "⏱️",
-    Classique: "♟️",
+  const getIcon = () => {
+    switch (cadence) {
+      case 'Blitz':
+        return <Zap className="w-3.5 h-3.5 text-[#D4A373]" />;
+      case 'Rapide':
+        return <Timer className="w-3.5 h-3.5 text-[#D97757]" />;
+      case 'Classique':
+        return <Crown className="w-3.5 h-3.5 text-[#60A5FA]" />;
+    }
   };
 
   return (
-    <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold border ${styles[cadence]}`}>
-      <span>{icons[cadence]}</span>
+    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium border ${styles[cadence]}`}>
+      {getIcon()}
       <span>{cadence}</span>
     </span>
   );
@@ -25,22 +31,23 @@ export const CadenceBadge: React.FC<{ cadence: CadenceType }> = ({ cadence }) =>
 export const StatusBadge: React.FC<{ status: TournamentStatus }> = ({ status }) => {
   if (status === 'upcoming') {
     return (
-      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-950 text-emerald-400 border border-emerald-800">
-        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+      <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#1A251C] text-[#8FBC8F] border border-[#7E9F80]/40">
+        <span className="w-1.5 h-1.5 rounded-full bg-[#7E9F80] animate-pulse"></span>
         <span>À venir</span>
       </span>
     );
   }
   if (status === 'ongoing') {
     return (
-      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-950 text-amber-400 border border-amber-800">
-        <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping"></span>
+      <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#2B1F19] text-[#E2896B] border border-[#D97757]/40">
+        <span className="w-1.5 h-1.5 rounded-full bg-[#D97757] animate-ping"></span>
         <span>En cours</span>
       </span>
     );
   }
   return (
-    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-800 text-slate-400 border border-slate-700">
+    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#21201C] text-[#9C968B] border border-[#2E2C27]">
+      <CheckCircle2 className="w-3.5 h-3.5 text-[#7D786F]" />
       <span>Terminé</span>
     </span>
   );

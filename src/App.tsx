@@ -27,7 +27,7 @@ export const App: React.FC = () => {
   return (
     <LanguageProvider>
       <Router>
-        <div className="flex flex-col min-h-screen bg-[#0b0f17] text-slate-100 selection:bg-hamra-600 selection:text-white">
+        <div className="flex flex-col min-h-screen bg-[#141413] text-[#F5F2EB] selection:bg-[#D97757] selection:text-white">
           <Header onOpenRegisterModal={() => setRegisterModalOpen(true)} />
           
           <main className="flex-grow">
