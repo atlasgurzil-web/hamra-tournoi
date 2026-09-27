@@ -14,11 +14,11 @@ export const App: React.FC = () => {
   return (
     <TournamentProvider>
       <Router>
-        <div className="flex flex-col min-h-screen bg-[#0A0E17] text-slate-100 selection:bg-red-600 selection:text-white font-sans antialiased">
+        <div className="flex flex-col min-h-screen w-full max-w-[100vw] overflow-x-clip bg-[#0A0E17] text-slate-100 selection:bg-red-600 selection:text-white font-sans antialiased">
           {/* Official Vercel Tournament Header */}
           <VercelNavbar />
 
-          <main className="flex-grow">
+          <main className="flex-grow w-full max-w-full overflow-x-hidden">
             <Routes>
               {/* Homepage: Live Tournaments List with Anti-Overbooking Gauges */}
               <Route path="/" element={<VercelHomePage />} />
