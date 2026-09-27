@@ -1,13 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Crown, Calendar, MapPin, Clock, Award, QrCode, Users, UserCheck, ShieldCheck, Send, CheckCircle2, X } from 'lucide-react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import { ArrowLeft, Crown, Calendar, MapPin, Clock, Award, QrCode, Users, UserCheck, ShieldCheck, Send, CheckCircle2, X, Settings, Trash2 } from 'lucide-react';
 import { useTournaments } from '../context/TournamentContext';
 import { CompetitorPassCard } from '../components/CompetitorPassCard';
+import { EditTournamentModal } from '../components/modals/EditTournamentModal';
+import { ConfirmDeleteModal } from '../components/modals/ConfirmDeleteModal';
 
 export const VercelTournamentDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
-  const { getTournamentBySlug, registerPlayer } = useTournaments();
+  const navigate = useNavigate();
+  const { getTournamentBySlug, registerPlayer, updateTournament, deleteTournament } = useTournaments();
   const tournament = getTournamentBySlug(slug || '');
+
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const [formData, setFormData] = useState({
     first_name: '',
@@ -102,8 +108,8 @@ export const VercelTournamentDetailPage: React.FC = () => {
 
   return (
     <div className="w-full max-w-5xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-14 space-y-6 sm:space-y-10 pb-28 md:pb-16 bg-[#0A0E17]">
-      {/* Back Button */}
-      <div>
+      {/* Top Navigation & Organizer Action Bar */}
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <Link
           to="/"
           className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-slate-300 hover:text-amber-400 transition-colors bg-slate-900/80 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl border border-slate-800"
@@ -111,6 +117,25 @@ export const VercelTournamentDetailPage: React.FC = () => {
           <ArrowLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-red-500" />
           <span>Retour aux tournois</span>
         </Link>
+
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setIsEditModalOpen(true)}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-slate-900/90 border border-slate-700 text-slate-300 hover:text-amber-400 hover:border-amber-400/50 text-xs sm:text-sm font-bold transition-all shadow-md cursor-pointer"
+            title="Modifier les critères techniques du tournoi"
+          >
+            <Settings className="w-3.5 h-3.5 text-amber-400" />
+            <span>Modifier Tournoi</span>
+          </button>
+          <button
+            onClick={() => setIsDeleteModalOpen(true)}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-red-950/50 border border-red-500/30 text-red-400 hover:bg-red-900/60 hover:text-red-200 text-xs sm:text-sm font-bold transition-all shadow-md cursor-pointer"
+            title="Supprimer ce tournoi"
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+            <span>Supprimer</span>
+          </button>
+        </div>
       </div>
 
       {/* Main Tournament Info Card */}
@@ -442,6 +467,29 @@ export const VercelTournamentDetailPage: React.FC = () => {
             </button>
           </div>
         </div>
+      )}
+      {/* Modals for Tournament Edit & Delete */}
+      {isEditModalOpen && (
+        <EditTournamentModal
+          tournament={tournament}
+          isOpen={isEditModalOpen}
+          onClose={() => setIsEditModalOpen(false)}
+          onSave={(updated) => updateTournament(tournament.id, updated)}
+        />
+      )}
+
+      {isDeleteModalOpen && (
+        <ConfirmDeleteModal
+          isOpen={isDeleteModalOpen}
+          title="Supprimer le tournoi"
+          message={`Êtes-vous certain de vouloir supprimer définitivement le tournoi "${tournament.name}" ? Tous les joueurs inscrits associés seront également supprimés.`}
+          onConfirm={() => {
+            deleteTournament(tournament.id);
+            setIsDeleteModalOpen(false);
+            navigate('/');
+          }}
+          onCancel={() => setIsDeleteModalOpen(false)}
+        />
       )}
 
     </div>

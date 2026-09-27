@@ -1,13 +1,29 @@
 import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { Users, Search, Download, Trophy, Shield, Filter, Award, ChevronRight, UserCheck } from 'lucide-react';
+import { Users, Search, Download, Trophy, Shield, Filter, Award, ChevronRight, UserCheck, Edit, Trash2, UserPlus } from 'lucide-react';
 import { useTournaments } from '../context/TournamentContext';
+import { PlayerRegistration } from '../types/tournament';
+import { EditPlayerModal } from '../components/modals/EditPlayerModal';
+import { AddPlayerModal } from '../components/modals/AddPlayerModal';
+import { ConfirmDeleteModal } from '../components/modals/ConfirmDeleteModal';
 
 export const VercelJoueursPage: React.FC = () => {
-  const { tournaments, players } = useTournaments();
+  const {
+    tournaments,
+    players,
+    addPlayerDirect,
+    updatePlayer,
+    deletePlayer
+  } = useTournaments();
+
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedClub, setSelectedClub] = useState<string>('ALL');
   const [sortBy, setSortBy] = useState<'rating' | 'name' | 'bib'>('rating');
+
+  // Modals state
+  const [isAddPlayerOpen, setIsAddPlayerOpen] = useState(false);
+  const [editingPlayer, setEditingPlayer] = useState<PlayerRegistration | null>(null);
+  const [deletingPlayer, setDeletingPlayer] = useState<PlayerRegistration | null>(null);
 
   const clubs = useMemo(() => {
     const clubSet = new Set<string>();
@@ -73,20 +89,28 @@ export const VercelJoueursPage: React.FC = () => {
             <span>REGISTRE_CENTRAL // FIDE_DATABASE</span>
           </div>
           <h1 className="font-serif font-black text-2xl sm:text-4xl lg:text-5xl text-white tracking-tight break-words">
-            Annuaire & Cotes FIDE
+            Annuaire & Gestion des Joueurs
           </h1>
           <p className="text-xs sm:text-base text-slate-300 mt-1 font-medium">
-            Registre officiel des compétiteurs inscrits, historique de classement et affiliations régionales.
+            Inscription directe, modification de cote FIDE, suppression et exports certifiés.
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
+          <button
+            onClick={() => setIsAddPlayerOpen(true)}
+            className="flex items-center justify-center gap-2 px-4 py-2.5 sm:px-5 sm:py-3 rounded-xl sm:rounded-2xl btn-hamra text-xs sm:text-sm font-bold shadow-xl cursor-pointer"
+          >
+            <UserPlus className="w-4 h-4" />
+            <span>Inscrire un Joueur</span>
+          </button>
+
           <button
             onClick={handleExportCSV}
-            className="flex items-center justify-center gap-2 w-full sm:w-auto px-4 py-2.5 sm:px-6 sm:py-3.5 rounded-xl sm:rounded-2xl btn-gold text-xs sm:text-sm font-bold shadow-xl cursor-pointer"
+            className="flex items-center justify-center gap-2 px-4 py-2.5 sm:px-5 sm:py-3 rounded-xl sm:rounded-2xl btn-gold text-xs sm:text-sm font-bold shadow-xl cursor-pointer"
           >
             <Download className="w-4 h-4" />
-            <span>Exporter l'annuaire (.CSV)</span>
+            <span>Export CSV</span>
           </button>
         </div>
       </div>
@@ -160,10 +184,10 @@ export const VercelJoueursPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Players Table - SSENSE Style Isolated Scroll */}
+        {/* Players Table - SSENSE Style Isolated Scroll with Edit & Delete actions */}
         <div className="w-full overflow-hidden rounded-xl sm:rounded-2xl border border-slate-800">
           <div className="w-full overflow-x-auto">
-            <table className="w-full text-left text-xs sm:text-sm text-slate-200 font-sans min-w-[650px]">
+            <table className="w-full text-left text-xs sm:text-sm text-slate-200 font-sans min-w-[760px]">
               <thead className="bg-[#070A10] text-slate-400 uppercase text-[10px] sm:text-[11px] font-mono border-b border-slate-800 tracking-wider">
                 <tr>
                   <th className="p-3 sm:p-4">[BIB]</th>
@@ -173,7 +197,7 @@ export const VercelJoueursPage: React.FC = () => {
                   <th className="p-3 sm:p-4">[FIDE_ID]</th>
                   <th className="p-3 sm:p-4">[RATING_ELO]</th>
                   <th className="p-3 sm:p-4">[ASSIGNED_TOURNAMENT]</th>
-                  <th className="p-3 sm:p-4 text-right">[STATUS]</th>
+                  <th className="p-3 sm:p-4 text-right">[ACTIONS]</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-800 bg-[#0F172A]/50">
@@ -222,9 +246,22 @@ export const VercelJoueursPage: React.FC = () => {
                         {getTournamentName(player.tournament_id)}
                       </td>
                       <td className="p-3 sm:p-4 text-right whitespace-nowrap">
-                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] sm:text-[11px] font-mono font-bold bg-emerald-950/70 text-emerald-300 border border-emerald-500/50">
-                          <UserCheck className="w-3 h-3" /> VERIFIED
-                        </span>
+                        <div className="flex items-center justify-end gap-1.5">
+                          <button
+                            onClick={() => setEditingPlayer(player)}
+                            className="p-1.5 sm:p-2 rounded-lg bg-slate-800 text-slate-300 hover:text-amber-400 hover:bg-slate-750 transition-colors cursor-pointer"
+                            title="Modifier ce joueur"
+                          >
+                            <Edit className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            onClick={() => setDeletingPlayer(player)}
+                            className="p-1.5 sm:p-2 rounded-lg bg-red-950/40 text-red-400 hover:text-red-200 hover:bg-red-900/50 transition-colors cursor-pointer"
+                            title="Supprimer ce joueur"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))
@@ -241,6 +278,39 @@ export const VercelJoueursPage: React.FC = () => {
         </div>
 
       </div>
+
+      {/* Modals for Direct Add, Edit and Delete */}
+      <AddPlayerModal
+        tournaments={tournaments}
+        isOpen={isAddPlayerOpen}
+        onClose={() => setIsAddPlayerOpen(false)}
+        onAdd={(data) => addPlayerDirect(data)}
+      />
+
+      {editingPlayer && (
+        <EditPlayerModal
+          player={editingPlayer}
+          isOpen={!!editingPlayer}
+          onClose={() => setEditingPlayer(null)}
+          onSave={(updatedData) => {
+            updatePlayer(editingPlayer.id, updatedData);
+            setEditingPlayer(null);
+          }}
+        />
+      )}
+
+      {deletingPlayer && (
+        <ConfirmDeleteModal
+          isOpen={!!deletingPlayer}
+          title="Supprimer le joueur"
+          message={`Êtes-vous sûr de vouloir supprimer définitivement ${deletingPlayer.first_name} ${deletingPlayer.last_name} (Dossard #${deletingPlayer.bib_number}) ? Cette action libérera automatiquement une place dans son tournoi.`}
+          onConfirm={() => {
+            deletePlayer(deletingPlayer.id);
+            setDeletingPlayer(null);
+          }}
+          onCancel={() => setDeletingPlayer(null)}
+        />
+      )}
     </div>
   );
 };

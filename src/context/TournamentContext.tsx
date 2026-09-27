@@ -8,6 +8,11 @@ interface TournamentContextType {
   getPlayersForTournament: (tournamentId: string) => PlayerRegistration[];
   registerPlayer: (tournamentSlug: string, playerData: Omit<PlayerRegistration, 'id' | 'tournament_id' | 'bib_number' | 'created_at'>) => { success: boolean; bibNumber?: number; message?: string };
   addTournament: (newTournament: Omit<Tournament, 'id' | 'slug' | 'confirmed_count' | 'waitlist_count' | 'paid_count' | 'is_full' | 'spots_left'>) => Tournament;
+  updateTournament: (tournamentId: string, updatedData: Partial<Tournament>) => void;
+  deleteTournament: (tournamentId: string) => void;
+  addPlayerDirect: (playerData: Omit<PlayerRegistration, 'id' | 'bib_number' | 'created_at'>) => PlayerRegistration | null;
+  updatePlayer: (playerId: string, updatedData: Partial<PlayerRegistration>) => void;
+  deletePlayer: (playerId: string) => void;
 }
 
 const INITIAL_TOURNAMENTS: Tournament[] = [
@@ -114,6 +119,7 @@ export const TournamentProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     return players.filter((p) => p.tournament_id === tournamentId);
   };
 
+  // Public player registration (with auto-bib assignment and capacity update)
   const registerPlayer = (
     tournamentSlug: string,
     playerData: Omit<PlayerRegistration, 'id' | 'tournament_id' | 'bib_number' | 'created_at'>
@@ -153,6 +159,81 @@ export const TournamentProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     return { success: true, bibNumber };
   };
 
+  // Direct player creation from Admin Dashboard / Player Directory
+  const addPlayerDirect = (
+    playerData: Omit<PlayerRegistration, 'id' | 'bib_number' | 'created_at'>
+  ): PlayerRegistration | null => {
+    const tournament = tournaments.find((t) => t.id === playerData.tournament_id);
+    if (!tournament) return null;
+
+    const tournamentPlayers = players.filter((p) => p.tournament_id === tournament.id);
+    const bibNumber = tournamentPlayers.length + 1;
+
+    const newPlayer: PlayerRegistration = {
+      ...playerData,
+      id: `p-${Date.now()}`,
+      bib_number: bibNumber,
+      created_at: new Date().toISOString()
+    };
+
+    setPlayers((prev) => [newPlayer, ...prev]);
+
+    setTournaments((prev) =>
+      prev.map((t) => {
+        if (t.id === tournament.id) {
+          const newConfirmed = t.confirmed_count + 1;
+          const newSpots = Math.max(0, t.max_players - newConfirmed);
+          return {
+            ...t,
+            confirmed_count: newConfirmed,
+            spots_left: newSpots,
+            is_full: newConfirmed >= t.max_players
+          };
+        }
+        return t;
+      })
+    );
+
+    return newPlayer;
+  };
+
+  // Update existing player
+  const updatePlayer = (playerId: string, updatedData: Partial<PlayerRegistration>) => {
+    setPlayers((prev) =>
+      prev.map((p) => {
+        if (p.id === playerId) {
+          return { ...p, ...updatedData };
+        }
+        return p;
+      })
+    );
+  };
+
+  // Delete player (and automatically recalculate tournament gauge)
+  const deletePlayer = (playerId: string) => {
+    const playerToDelete = players.find((p) => p.id === playerId);
+    if (!playerToDelete) return;
+
+    setPlayers((prev) => prev.filter((p) => p.id !== playerId));
+
+    setTournaments((prev) =>
+      prev.map((t) => {
+        if (t.id === playerToDelete.tournament_id) {
+          const newConfirmed = Math.max(0, t.confirmed_count - 1);
+          const newSpots = Math.max(0, t.max_players - newConfirmed);
+          return {
+            ...t,
+            confirmed_count: newConfirmed,
+            spots_left: newSpots,
+            is_full: newConfirmed >= t.max_players
+          };
+        }
+        return t;
+      })
+    );
+  };
+
+  // Create new tournament
   const addTournament = (
     newTournamentData: Omit<Tournament, 'id' | 'slug' | 'confirmed_count' | 'waitlist_count' | 'paid_count' | 'is_full' | 'spots_left'>
   ): Tournament => {
@@ -182,6 +263,35 @@ export const TournamentProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     return created;
   };
 
+  // Update existing tournament
+  const updateTournament = (tournamentId: string, updatedData: Partial<Tournament>) => {
+    setTournaments((prev) =>
+      prev.map((t) => {
+        if (t.id === tournamentId) {
+          const maxPlayers = updatedData.max_players !== undefined ? updatedData.max_players : t.max_players;
+          const confirmed = updatedData.confirmed_count !== undefined ? updatedData.confirmed_count : t.confirmed_count;
+          const newSpots = Math.max(0, maxPlayers - confirmed);
+          const isFull = confirmed >= maxPlayers;
+
+          return {
+            ...t,
+            ...updatedData,
+            max_players: maxPlayers,
+            spots_left: newSpots,
+            is_full: isFull
+          };
+        }
+        return t;
+      })
+    );
+  };
+
+  // Delete tournament (and cascade delete its registered players)
+  const deleteTournament = (tournamentId: string) => {
+    setTournaments((prev) => prev.filter((t) => t.id !== tournamentId));
+    setPlayers((prev) => prev.filter((p) => p.tournament_id !== tournamentId));
+  };
+
   return (
     <TournamentContext.Provider
       value={{
@@ -190,7 +300,12 @@ export const TournamentProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         getTournamentBySlug,
         getPlayersForTournament,
         registerPlayer,
-        addTournament
+        addTournament,
+        updateTournament,
+        deleteTournament,
+        addPlayerDirect,
+        updatePlayer,
+        deletePlayer
       }}
     >
       {children}
