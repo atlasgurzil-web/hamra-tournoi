@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Trophy, ArrowLeft, Calendar, Clock, MapPin, Gauge, ShieldCheck, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Trophy, ArrowLeft, Calendar, Clock, MapPin, Gauge, ShieldCheck, CheckCircle2 } from 'lucide-react';
 import { useTournaments } from '../context/TournamentContext';
 
 export const VercelNouveauTournoiPage: React.FC = () => {
-  const navigate = useNavigate();
   const { addTournament } = useTournaments();
 
   const [formData, setFormData] = useState({
@@ -12,11 +11,11 @@ export const VercelNouveauTournoiPage: React.FC = () => {
     description: '',
     start_date: '',
     end_date: '',
-    start_time: '21:30',
+    start_time: '22:00',
     location: 'Café Dardara, Annaba',
     cadence: '5+3',
     rounds: 7,
-    max_players: 40,
+    max_players: 50,
     registration_fee: 0,
     registration_open: true
   });
@@ -60,86 +59,86 @@ export const VercelNouveauTournoiPage: React.FC = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8 bg-[#141413]">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 space-y-10 bg-[#0A0E17]">
       {/* Back button */}
       <div>
         <Link
           to="/dashboard"
-          className="inline-flex items-center gap-2 text-xs font-mono font-medium text-[#9C968B] hover:text-[#D97757] transition-colors"
+          className="inline-flex items-center gap-2.5 text-sm font-bold text-slate-300 hover:text-amber-400 transition-colors bg-slate-900/80 px-4 py-2 rounded-xl border border-slate-800"
         >
-          <ArrowLeft className="w-3.5 h-3.5" />
+          <ArrowLeft className="w-4 h-4 text-red-500" />
           <span>Retour à l'Espace Organisateur</span>
         </Link>
       </div>
 
       {/* Header */}
-      <div className="border-b border-[#2A2823] pb-6">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#D97757]/15 border border-[#D97757]/30 text-[#E2896B] text-xs font-mono font-semibold uppercase tracking-wider mb-2">
-          <Trophy className="w-3.5 h-3.5" />
+      <div className="border-b border-slate-800 pb-8">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-red-950/60 border border-red-500/40 text-red-300 text-xs font-mono font-bold uppercase tracking-wider mb-3">
+          <Trophy className="w-4 h-4 text-amber-400" />
           <span>Configuration de Compétition</span>
         </div>
-        <h1 className="font-serif text-3xl sm:text-4xl text-[#F5F2EB]">
+        <h1 className="font-serif font-black text-3xl sm:text-5xl text-white tracking-tight">
           Créer un Nouveau Tournoi
         </h1>
-        <p className="text-sm text-[#9C968B] mt-1 font-sans">
+        <p className="text-base text-slate-300 mt-2 font-medium">
           Paramétrez les critères techniques, la cadence de jeu et activez la jauge anti-surréservation en temps réel.
         </p>
       </div>
 
       {isSuccess ? (
-        <div className="bg-[#1E1D1A] rounded-3xl border border-[#7E9F80]/40 p-8 text-center space-y-6 shadow-2xl">
-          <div className="w-16 h-16 rounded-full bg-[#18261B] text-[#7E9F80] border border-[#7E9F80]/40 flex items-center justify-center mx-auto shadow-inner">
-            <CheckCircle2 className="w-8 h-8" />
+        <div className="bg-[#0F172A]/90 backdrop-blur-xl rounded-3xl border-2 border-emerald-500/50 p-8 sm:p-12 text-center space-y-6 shadow-2xl">
+          <div className="w-20 h-20 rounded-full bg-emerald-950/80 text-emerald-400 border-2 border-emerald-500 flex items-center justify-center mx-auto shadow-xl">
+            <CheckCircle2 className="w-10 h-10" />
           </div>
           <div>
-            <h2 className="font-serif text-2xl sm:text-3xl text-[#F5F2EB]">
+            <h2 className="font-serif font-black text-3xl sm:text-4xl text-white">
               Tournoi publié avec succès !
             </h2>
-            <p className="text-sm text-[#BDB8AD] mt-2 max-w-lg mx-auto font-sans">
-              La page officielle d'inscription est dès à présent accessible en ligne avec jauge dynamique et attribution immédiate de dossards.
+            <p className="text-base text-slate-300 mt-3 max-w-lg mx-auto font-medium">
+              La page officielle d'inscription est en ligne avec jauge dynamique et attribution instantanée de dossards.
             </p>
           </div>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
             <Link
               to={`/tournoi/${createdSlug}`}
-              className="px-6 py-3 rounded-xl btn-claude text-sm font-semibold shadow-xl active:scale-95"
+              className="px-8 py-4 rounded-2xl btn-hamra text-base font-extrabold shadow-xl"
             >
               Voir la page publique du tournoi
             </Link>
             <Link
               to="/dashboard"
-              className="px-6 py-3 rounded-xl btn-obsidian text-sm font-semibold hover:border-[#D4A373] text-[#D4A373] active:scale-95"
+              className="px-8 py-4 rounded-2xl btn-secondary text-base font-bold"
             >
               Revenir au tableau de bord
             </Link>
           </div>
         </div>
       ) : (
-        <form onSubmit={handleSubmit} className="bg-[#1E1D1A] rounded-3xl border border-[#2E2C27] p-6 sm:p-8 space-y-8 shadow-2xl">
+        <form onSubmit={handleSubmit} className="bg-[#0F172A]/90 backdrop-blur-xl rounded-3xl border border-slate-800 p-6 sm:p-10 space-y-10 shadow-2xl">
           
           {/* General Information */}
-          <div className="space-y-4">
-            <h2 className="text-xs font-mono uppercase text-[#D4A373] tracking-widest flex items-center gap-2">
+          <div className="space-y-6">
+            <h2 className="text-xs font-mono uppercase text-amber-400 tracking-widest flex items-center gap-2 font-bold">
               <span>01. Identification du Tournoi</span>
             </h2>
 
-            <div className="space-y-1.5">
-              <label className="text-xs font-medium text-[#BDB8AD]">
-                Nom officiel du tournoi <span className="text-[#D97757]">*</span>
+            <div className="space-y-2">
+              <label className="text-xs font-bold uppercase tracking-wider text-slate-200">
+                Nom officiel du tournoi <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
-                name="name"
                 required
                 placeholder="ex: ♟️ LE CERCLE DES ROIS V ♟️"
                 value={formData.name}
                 onChange={handleChange}
-                className="w-full px-4 py-3 rounded-xl bg-[#141413] border border-[#2E2C27] text-white text-sm placeholder-[#7D786F] focus:border-[#D97757] outline-none"
+                name="name"
+                className="w-full px-5 py-4 rounded-xl bg-[#070A10] border border-slate-700 text-white text-base placeholder-slate-500 focus:border-red-500 outline-none"
               />
             </div>
 
-            <div className="space-y-1.5">
-              <label className="text-xs font-medium text-[#BDB8AD]">
+            <div className="space-y-2">
+              <label className="text-xs font-bold uppercase tracking-wider text-slate-200">
                 Description et Règlement FIDE
               </label>
               <textarea
@@ -148,21 +147,21 @@ export const VercelNouveauTournoiPage: React.FC = () => {
                 placeholder="Précisez le cadre du tournoi, arbitrage, règles de départage (Buchholz)..."
                 value={formData.description}
                 onChange={handleChange}
-                className="w-full px-4 py-3 rounded-xl bg-[#141413] border border-[#2E2C27] text-white text-sm placeholder-[#7D786F] focus:border-[#D97757] outline-none"
+                className="w-full px-5 py-4 rounded-xl bg-[#070A10] border border-slate-700 text-white text-base placeholder-slate-500 focus:border-red-500 outline-none"
               />
             </div>
           </div>
 
           {/* Schedule and Venue */}
-          <div className="space-y-4 pt-6 border-t border-[#26241F]">
-            <h2 className="text-xs font-mono uppercase text-[#D4A373] tracking-widest flex items-center gap-2">
+          <div className="space-y-6 pt-8 border-t border-slate-800">
+            <h2 className="text-xs font-mono uppercase text-amber-400 tracking-widest flex items-center gap-2 font-bold">
               <span>02. Planning & Localisation</span>
             </h2>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="space-y-1.5">
-                <label className="text-xs font-medium text-[#BDB8AD] flex items-center gap-1.5">
-                  <Calendar className="w-3.5 h-3.5 text-[#D97757]" />
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+              <div className="space-y-2">
+                <label className="text-xs font-bold uppercase tracking-wider text-slate-200 flex items-center gap-1.5">
+                  <Calendar className="w-4 h-4 text-red-500" />
                   <span>Date Début *</span>
                 </label>
                 <input
@@ -171,13 +170,13 @@ export const VercelNouveauTournoiPage: React.FC = () => {
                   required
                   value={formData.start_date}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 rounded-xl bg-[#141413] border border-[#2E2C27] text-white text-sm focus:border-[#D97757] outline-none"
+                  className="w-full px-5 py-3.5 rounded-xl bg-[#070A10] border border-slate-700 text-white text-base focus:border-red-500 outline-none"
                 />
               </div>
 
-              <div className="space-y-1.5">
-                <label className="text-xs font-medium text-[#BDB8AD] flex items-center gap-1.5">
-                  <Calendar className="w-3.5 h-3.5 text-[#9C968B]" />
+              <div className="space-y-2">
+                <label className="text-xs font-bold uppercase tracking-wider text-slate-200 flex items-center gap-1.5">
+                  <Calendar className="w-4 h-4 text-slate-400" />
                   <span>Date Fin (Optionnel)</span>
                 </label>
                 <input
@@ -185,13 +184,13 @@ export const VercelNouveauTournoiPage: React.FC = () => {
                   name="end_date"
                   value={formData.end_date}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 rounded-xl bg-[#141413] border border-[#2E2C27] text-white text-sm focus:border-[#D97757] outline-none"
+                  className="w-full px-5 py-3.5 rounded-xl bg-[#070A10] border border-slate-700 text-white text-base focus:border-red-500 outline-none"
                 />
               </div>
 
-              <div className="space-y-1.5">
-                <label className="text-xs font-medium text-[#BDB8AD] flex items-center gap-1.5">
-                  <Clock className="w-3.5 h-3.5 text-[#D97757]" />
+              <div className="space-y-2">
+                <label className="text-xs font-bold uppercase tracking-wider text-slate-200 flex items-center gap-1.5">
+                  <Clock className="w-4 h-4 text-amber-400" />
                   <span>Heure de Début *</span>
                 </label>
                 <input
@@ -200,14 +199,14 @@ export const VercelNouveauTournoiPage: React.FC = () => {
                   required
                   value={formData.start_time}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 rounded-xl bg-[#141413] border border-[#2E2C27] text-white text-sm focus:border-[#D97757] outline-none"
+                  className="w-full px-5 py-3.5 rounded-xl bg-[#070A10] border border-slate-700 text-white text-base focus:border-red-500 outline-none"
                 />
               </div>
             </div>
 
-            <div className="space-y-1.5">
-              <label className="text-xs font-medium text-[#BDB8AD] flex items-center gap-1.5">
-                <MapPin className="w-3.5 h-3.5 text-[#D97757]" />
+            <div className="space-y-2">
+              <label className="text-xs font-bold uppercase tracking-wider text-slate-200 flex items-center gap-1.5">
+                <MapPin className="w-4 h-4 text-red-500" />
                 <span>Lieu de la compétition *</span>
               </label>
               <input
@@ -217,27 +216,27 @@ export const VercelNouveauTournoiPage: React.FC = () => {
                 placeholder="ex: Café Dardara, Annaba ou Siège Hamra"
                 value={formData.location}
                 onChange={handleChange}
-                className="w-full px-4 py-3 rounded-xl bg-[#141413] border border-[#2E2C27] text-white text-sm placeholder-[#7D786F] focus:border-[#D97757] outline-none"
+                className="w-full px-5 py-4 rounded-xl bg-[#070A10] border border-slate-700 text-white text-base placeholder-slate-500 focus:border-red-500 outline-none"
               />
             </div>
           </div>
 
           {/* Technical and Capacity Settings */}
-          <div className="space-y-4 pt-6 border-t border-[#26241F]">
-            <h2 className="text-xs font-mono uppercase text-[#D4A373] tracking-widest flex items-center gap-2">
+          <div className="space-y-6 pt-8 border-t border-slate-800">
+            <h2 className="text-xs font-mono uppercase text-amber-400 tracking-widest flex items-center gap-2 font-bold">
               <span>03. Paramètres Techniques & Jauge</span>
             </h2>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="space-y-1.5">
-                <label className="text-xs font-medium text-[#BDB8AD]">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+              <div className="space-y-2">
+                <label className="text-xs font-bold uppercase tracking-wider text-slate-200">
                   Cadence de jeu
                 </label>
                 <select
                   name="cadence"
                   value={formData.cadence}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 rounded-xl bg-[#141413] border border-[#2E2C27] text-white text-sm focus:border-[#D97757] outline-none"
+                  className="w-full px-5 py-3.5 rounded-xl bg-[#070A10] border border-slate-700 text-white text-base font-bold focus:border-red-500 outline-none"
                 >
                   <option value="5+3">Blitz 5 min + 3 sec / coup</option>
                   <option value="3+2">Blitz 3 min + 2 sec / coup</option>
@@ -247,8 +246,8 @@ export const VercelNouveauTournoiPage: React.FC = () => {
                 </select>
               </div>
 
-              <div className="space-y-1.5">
-                <label className="text-xs font-medium text-[#BDB8AD]">
+              <div className="space-y-2">
+                <label className="text-xs font-bold uppercase tracking-wider text-slate-200">
                   Nombre de Rondes
                 </label>
                 <input
@@ -258,13 +257,13 @@ export const VercelNouveauTournoiPage: React.FC = () => {
                   max="13"
                   value={formData.rounds}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 rounded-xl bg-[#141413] border border-[#2E2C27] text-white text-sm focus:border-[#D97757] outline-none"
+                  className="w-full px-5 py-3.5 rounded-xl bg-[#070A10] border border-slate-700 text-white text-base focus:border-red-500 outline-none"
                 />
               </div>
 
-              <div className="space-y-1.5">
-                <label className="text-xs font-medium text-[#BDB8AD] flex items-center gap-1">
-                  <Gauge className="w-3.5 h-3.5 text-[#D97757]" />
+              <div className="space-y-2">
+                <label className="text-xs font-bold uppercase tracking-wider text-slate-200 flex items-center gap-1.5">
+                  <Gauge className="w-4 h-4 text-red-500" />
                   <span>Capacité Maximale *</span>
                 </label>
                 <input
@@ -275,14 +274,14 @@ export const VercelNouveauTournoiPage: React.FC = () => {
                   required
                   value={formData.max_players}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 rounded-xl bg-[#141413] border border-[#2E2C27] text-white text-sm focus:border-[#D97757] outline-none"
+                  className="w-full px-5 py-3.5 rounded-xl bg-[#070A10] border border-slate-700 text-white text-base focus:border-red-500 outline-none"
                 />
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-              <div className="space-y-1.5">
-                <label className="text-xs font-medium text-[#BDB8AD]">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-2">
+              <div className="space-y-2">
+                <label className="text-xs font-bold uppercase tracking-wider text-slate-200">
                   Frais d'inscription (DZD)
                 </label>
                 <input
@@ -292,24 +291,24 @@ export const VercelNouveauTournoiPage: React.FC = () => {
                   step="50"
                   value={formData.registration_fee}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 rounded-xl bg-[#141413] border border-[#2E2C27] text-white text-sm focus:border-[#D97757] outline-none"
+                  className="w-full px-5 py-3.5 rounded-xl bg-[#070A10] border border-slate-700 text-white text-base focus:border-red-500 outline-none"
                 />
-                <span className="text-[11px] text-[#7D786F] block">
+                <span className="text-xs text-slate-400 block">
                   0 DZD = Inscription gratuite pour les sociétaires et invités
                 </span>
               </div>
 
-              <div className="space-y-1.5 flex flex-col justify-end">
-                <div className="p-4 rounded-xl bg-[#141413] border border-[#2E2C27] flex items-center justify-between">
+              <div className="space-y-2 flex flex-col justify-end">
+                <div className="p-4 rounded-2xl bg-[#070A10] border border-slate-700 flex items-center justify-between">
                   <div>
-                    <span className="text-xs font-semibold text-[#F5F2EB] block">Inscriptions Ouvertes</span>
-                    <span className="text-[11px] text-[#7D786F]">Le formulaire sera actif immédiatement</span>
+                    <span className="text-sm font-bold text-white block">Inscriptions Ouvertes</span>
+                    <span className="text-xs text-slate-400">Le formulaire sera actif immédiatement</span>
                   </div>
                   <input
                     type="checkbox"
                     checked={formData.registration_open}
                     onChange={(e) => setFormData(prev => ({ ...prev, registration_open: e.target.checked }))}
-                    className="w-5 h-5 accent-[#D97757] rounded cursor-pointer"
+                    className="w-6 h-6 accent-red-600 rounded cursor-pointer"
                   />
                 </div>
               </div>
@@ -317,29 +316,29 @@ export const VercelNouveauTournoiPage: React.FC = () => {
           </div>
 
           {/* Reassurance Features */}
-          <div className="bg-[#141413] rounded-2xl p-4 border border-[#2E2C27] flex flex-col sm:flex-row items-center gap-4 text-xs text-[#9C968B]">
+          <div className="bg-[#070A10] rounded-2xl p-5 border border-slate-800 flex flex-col sm:flex-row items-center gap-4 text-sm text-slate-300">
             <div className="flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4 text-[#7E9F80] shrink-0" />
+              <ShieldCheck className="w-5 h-5 text-emerald-400 shrink-0" />
               <span>Garantie anti-surréservation stricte activée</span>
             </div>
-            <div className="hidden sm:block text-[#3B3934]">•</div>
+            <div className="hidden sm:block text-slate-700">•</div>
             <div className="flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-[#D4A373] shrink-0" />
+              <CheckCircle2 className="w-5 h-5 text-amber-400 shrink-0" />
               <span>Compatible Swiss-Manager FIDE & FADE</span>
             </div>
           </div>
 
           {/* Submit Button */}
-          <div className="flex items-center justify-end gap-3 pt-4">
+          <div className="flex items-center justify-end gap-4 pt-4">
             <Link
               to="/dashboard"
-              className="px-5 py-3 rounded-xl btn-obsidian text-xs font-semibold text-[#BDB8AD]"
+              className="px-6 py-4 rounded-xl btn-secondary text-sm font-bold"
             >
               Annuler
             </Link>
             <button
               type="submit"
-              className="px-6 py-3 rounded-xl btn-claude text-xs font-semibold shadow-xl active:scale-95"
+              className="px-8 py-4 rounded-2xl btn-hamra text-base font-extrabold shadow-xl"
             >
               Publier le Tournoi & Activer la Jauge
             </button>

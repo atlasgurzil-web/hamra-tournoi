@@ -8,86 +8,61 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Claude Signature Terracotta
-        claude: {
-          50: '#FBF7F4',
-          100: '#F6ECE6',
-          200: '#ECD5C8',
-          300: '#E1B8A4',
-          400: '#E2896B',
-          500: '#D97757', // Terracotta officielle Anthropic Claude
-          600: '#C15F3C', // Terracotta soutenu
-          700: '#9E492B',
-          800: '#7D371E',
-          900: '#5F2915',
-          DEFAULT: '#D97757',
+        // Deep Obsidian Canvas
+        night: {
+          950: '#070A10',
+          900: '#0A0E17', // Vercel official deep canvas
+          850: '#0E1422',
+          800: '#141C2E',
+          card: '#0F172A',
+          border: '#1E293B',
+          borderLight: '#334155',
         },
-        // Warm Obsidian & Parchment Dark Canvas
-        obsidian: {
-          DEFAULT: '#141413',
-          surface: '#1B1A17',
-          card: '#21201C',
-          cardHover: '#292824',
-          border: '#2E2C27',
-          borderStrong: '#3D3A33',
-        },
-        parchment: {
-          DEFAULT: '#F5F2EB',
-          subtle: '#FAF7F2',
-          secondary: '#BDB8AD',
-          muted: '#7D786F',
-        },
-        brass: {
-          DEFAULT: '#D4A373',
-          light: '#E6C594',
-          dark: '#A67C52',
-        },
-        sage: {
-          DEFAULT: '#7E9F80',
-          subtle: '#9EBF9F',
-        },
-        // Compatibilité avec l'héritage Hamra
+        // Hamra Crimson Red (Club Official)
         hamra: {
-          50: '#FBF7F4',
-          100: '#F6ECE6',
-          200: '#ECD5C8',
-          300: '#E1B8A4',
-          400: '#E2896B',
-          500: '#D97757',
-          600: '#C15F3C',
-          700: '#A84424',
-          800: '#8A2E14',
-          900: '#661C08',
-          950: '#1F1E1B',
+          50: '#FFF1F2',
+          100: '#FFE4E6',
+          200: '#FECDD3',
+          300: '#FDA4AF',
+          400: '#FB7185',
+          500: '#F43F5E',
+          600: '#E11D48',
+          700: '#BE123C',
+          800: '#9F1239',
+          900: '#881337',
+          DEFAULT: '#E11D48',
+          vibrant: '#EF4444',
+          crimson: '#DC2626',
         },
-        board: {
-          light: '#F5F2EB',
-          tileLight: '#E8E3D7',
-          tileDark: '#5C564B',
-          tileRed: '#C15F3C',
-          tileCream: '#FBF7F4',
-          charcoal: '#1B1A17',
-          dark: '#141413',
-          nocturne: '#0F0F0E',
+        // Trophy Gold & Amber
+        gold: {
+          300: '#FDE68A',
+          400: '#FCD34D',
+          500: '#F59E0B',
+          600: '#D97706',
+          DEFAULT: '#F59E0B',
         },
-        trophy: {
-          gold: '#D4A373',
-          silver: '#BDB8AD',
-          bronze: '#A67C52',
+        // Emerald for verification / success
+        emerald: {
+          400: '#34D399',
+          500: '#10B981',
+          950: '#022C22',
+        },
+        slate: {
+          750: '#26334A',
+          850: '#131D31',
         }
       },
       fontFamily: {
-        serif: ['Instrument Serif', 'Cinzel', 'Georgia', 'serif'],
-        display: ['Instrument Serif', 'Cinzel', 'serif'],
+        serif: ['Cinzel', 'Instrument Serif', 'Georgia', 'serif'],
+        display: ['Cinzel', 'serif'],
         sans: ['Plus Jakarta Sans', 'Inter', 'system-ui', 'sans-serif'],
-        sport: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
         mono: ['JetBrains Mono', 'monospace'],
-        arabic: ['Noto Sans Arabic', 'Cairo', 'sans-serif'],
       },
       boxShadow: {
-        'claude': '0 10px 25px -5px rgba(217, 119, 87, 0.18), 0 8px 10px -6px rgba(217, 119, 87, 0.12)',
-        'claude-card': '0 4px 20px -2px rgba(0, 0, 0, 0.5), 0 2px 6px -1px rgba(0, 0, 0, 0.3)',
-        'card-dark': '0 4px 24px -2px rgba(0, 0, 0, 0.6), 0 2px 8px -1px rgba(0, 0, 0, 0.35)',
+        'hamra-glow': '0 0 35px -5px rgba(225, 29, 72, 0.4), 0 0 15px -3px rgba(225, 29, 72, 0.2)',
+        'gold-glow': '0 0 30px -5px rgba(245, 158, 11, 0.35)',
+        'card-elevated': '0 10px 30px -5px rgba(0, 0, 0, 0.7), 0 4px 12px -2px rgba(0, 0, 0, 0.5)',
       }
     },
   },

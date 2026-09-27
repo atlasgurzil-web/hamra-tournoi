@@ -1,126 +1,85 @@
-/* Hallmark · macrostructure: Editorial · theme: Claude-Terracotta-Obsidian · genre: editorial
- * pre-emit critique: P5 H5 E5 S5 R5 V5 · locked-tokens: pass · mobile-320: pass · a11y: pass
- */
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  :root {
-    --claude-bg: #141413;
-    --claude-surface: #1B1A17;
-    --claude-card: #21201C;
-    --claude-card-hover: #292824;
-    --claude-border: #2E2C27;
-    --claude-border-strong: #3D3A33;
-    --claude-terracotta: #D97757;
-    --claude-terracotta-dark: #C15F3C;
-    --claude-text: #F5F2EB;
-    --claude-text-muted: #9C968B;
-    --claude-brass: #D4A373;
-  }
+/* Hallmark · genre: editorial · theme: Hamra-Prestige (Night Navy / Crimson / Gold) */
 
+@layer base {
   html {
-    -webkit-tap-highlight-color: transparent;
-    background-color: #141413;
+    scroll-behavior: smooth;
     overflow-x: clip;
+    background-color: #0A0E17;
+    color: #F8FAFC;
   }
 
   body {
-    background-color: #141413;
-    color: #F5F2EB;
     overflow-x: clip;
     min-height: 100vh;
-    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 
-  /* Règle Hallmark : Titres toujours en roman (normal), jamais en italique forcé */
-  h1, h2, h3, h4, h5, h6 {
-    font-family: 'Instrument Serif', 'Cinzel', serif;
-    font-style: normal;
-    color: #F5F2EB;
-    letter-spacing: -0.02em;
-    font-weight: 400;
+  ::selection {
+    background-color: #DC2626;
+    color: #FFFFFF;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #0A0E17;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #1E293B;
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #DC2626;
   }
 }
 
-/* Custom Scrollbar - Style Claude Terracotta */
-::-webkit-scrollbar {
-  width: 7px;
-  height: 7px;
-}
-::-webkit-scrollbar-track {
-  background: #141413;
-}
-::-webkit-scrollbar-thumb {
-  background: #3D3A33;
-  border-radius: 9999px;
-  border: 1px solid #141413;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #D97757;
-}
+@layer components {
+  /* High-Impact Hamra Button */
+  .btn-hamra {
+    @apply inline-flex items-center justify-center font-bold transition-all duration-200 cursor-pointer;
+    background: linear-gradient(135deg, #DC2626 0%, #B91C1C 100%);
+    color: #FFFFFF;
+    box-shadow: 0 4px 20px -2px rgba(220, 38, 38, 0.45);
+    border: 1px solid rgba(254, 202, 202, 0.2);
+  }
+  .btn-hamra:hover {
+    background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+    box-shadow: 0 6px 25px -2px rgba(239, 68, 68, 0.6);
+    transform: translateY(-2px);
+  }
+  .btn-hamra:active {
+    transform: translateY(0) scale(0.98);
+  }
 
-/* Touch feedback utility */
-.touch-target {
-  min-height: 48px;
-  min-width: 48px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
+  /* Gold Luxury Button */
+  .btn-gold {
+    @apply inline-flex items-center justify-center font-bold transition-all duration-200 cursor-pointer;
+    background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+    color: #0F172A;
+    box-shadow: 0 4px 20px -2px rgba(245, 158, 11, 0.35);
+  }
+  .btn-gold:hover {
+    background: linear-gradient(135deg, #FCD34D 0%, #F59E0B 100%);
+    transform: translateY(-2px);
+  }
+  .btn-gold:active {
+    transform: translateY(0) scale(0.98);
+  }
 
-/* Texture échiquier discrète & chaleureuse style Claude */
-.bg-chess-pattern {
-  background-image: linear-gradient(45deg, rgba(217, 119, 87, 0.02) 25%, transparent 25%),
-                    linear-gradient(-45deg, rgba(217, 119, 87, 0.02) 25%, transparent 25%),
-                    linear-gradient(45deg, transparent 75%, rgba(217, 119, 87, 0.02) 75%),
-                    linear-gradient(-45deg, transparent 75%, rgba(217, 119, 87, 0.02) 75%);
-  background-size: 40px 40px;
-  background-position: 0 0, 0 20px, 20px -20px, -20px 0px;
-}
+  /* Elevated Glass Card */
+  .card-night {
+    @apply bg-[#0F172A]/90 backdrop-blur-xl border border-slate-800 rounded-3xl shadow-2xl;
+  }
 
-/* Halo doux terracotta caractéristique d'Anthropic Claude */
-.bg-claude-glow {
-  background: radial-gradient(circle at 50% 15%, rgba(217, 119, 87, 0.12) 0%, rgba(20, 20, 19, 0.98) 75%);
-}
-
-.glow-claude {
-  box-shadow: 0 0 35px -5px rgba(217, 119, 87, 0.25);
-}
-
-/* Boutons tactiles signature Claude */
-.btn-claude {
-  background: #D97757;
-  color: #FFFFFF;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 2px 10px rgba(217, 119, 87, 0.25);
-  transition: all 180ms cubic-bezier(0.16, 1, 0.3, 1);
-}
-.btn-claude:hover {
-  background: #C15F3C;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 14px rgba(217, 119, 87, 0.35);
-}
-.btn-claude:active {
-  transform: translateY(0);
-}
-
-.btn-obsidian {
-  background: #1B1A17;
-  color: #F5F2EB;
-  border: 1px solid #2E2C27;
-  transition: all 180ms cubic-bezier(0.16, 1, 0.3, 1);
-}
-.btn-obsidian:hover {
-  background: #24221E;
-  border-color: #3D3A33;
-  color: #FFFFFF;
-  transform: translateY(-1px);
-}
-.btn-obsidian:active {
-  transform: translateY(0);
+  /* Secondary Button */
+  .btn-secondary {
+    @apply inline-flex items-center justify-center font-semibold transition-all duration-200 bg-slate-900 border border-slate-700 text-slate-200 hover:text-white hover:bg-slate-800 hover:border-slate-600;
+  }
 }

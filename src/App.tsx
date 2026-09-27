@@ -14,7 +14,7 @@ export const App: React.FC = () => {
   return (
     <TournamentProvider>
       <Router>
-        <div className="flex flex-col min-h-screen bg-[#141413] text-[#F5F2EB] selection:bg-[#D97757] selection:text-white font-sans antialiased">
+        <div className="flex flex-col min-h-screen bg-[#0A0E17] text-slate-100 selection:bg-red-600 selection:text-white font-sans antialiased">
           {/* Official Vercel Tournament Header */}
           <VercelNavbar />
 

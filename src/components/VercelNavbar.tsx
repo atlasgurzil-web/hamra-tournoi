@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Trophy, LayoutDashboard, ShieldCheck, CirclePlus } from 'lucide-react';
+import { Trophy, LayoutDashboard, ShieldCheck, CirclePlus, Crown } from 'lucide-react';
 
 export const VercelNavbar: React.FC = () => {
   const location = useLocation();
@@ -12,13 +12,13 @@ export const VercelNavbar: React.FC = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-[#161513]/95 backdrop-blur-xl border-b border-[#2A2823] shadow-2xl transition-all">
+    <header className="sticky top-0 z-50 bg-[#0A0E17]/95 backdrop-blur-xl border-b border-slate-800 shadow-2xl transition-all">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20">
+        <div className="flex items-center justify-between h-20 sm:h-24">
           
           {/* Logo + Club Brand */}
-          <Link to="/" className="flex items-center gap-3.5 group">
-            <div className="w-12 h-12 rounded-full bg-white p-1 border-2 border-[#D97757] flex items-center justify-center shadow-lg transition-transform group-hover:scale-105">
+          <Link to="/" className="flex items-center gap-4 group">
+            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white p-1.5 border-2 border-red-600 flex items-center justify-center shadow-lg shadow-red-600/20 transition-transform group-hover:scale-105">
               <img
                 src="/logo_hamra_annaba.png"
                 alt="Logo Hamra Annaba 1944"
@@ -26,61 +26,61 @@ export const VercelNavbar: React.FC = () => {
               />
             </div>
             <div>
-              <div className="flex items-center gap-2">
-                <span className="font-serif text-lg sm:text-2xl tracking-tight text-[#F5F2EB] group-hover:text-[#D97757] transition-colors">
+              <div className="flex items-center gap-2.5">
+                <span className="font-serif font-black text-xl sm:text-2xl tracking-wide text-white group-hover:text-amber-400 transition-colors">
                   HAMRA ANNABA
                 </span>
-                <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#D97757]/15 text-[#E2896B] border border-[#D97757]/40">
-                  ÉCHECS 1944
+                <span className="text-xs font-mono font-bold px-2.5 py-1 rounded-full bg-red-600/20 text-red-400 border border-red-500/40">
+                  1944
                 </span>
               </div>
-              <p className="text-xs text-[#9C968B] font-medium hidden sm:block font-sans">
+              <p className="text-xs sm:text-sm text-slate-400 font-medium hidden sm:block">
                 Direction de Tournois & Arbitrage FIDE
               </p>
             </div>
           </Link>
 
-          {/* Nav Navigation Links */}
-          <nav className="flex items-center gap-2 sm:gap-3">
+          {/* Navigation Links */}
+          <nav className="flex items-center gap-2 sm:gap-4">
             <Link
               to="/"
-              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-sm font-semibold transition-all ${
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-all ${
                 isActive('/')
-                  ? 'bg-[#21201C] text-[#E2896B] border border-[#D97757]/30 shadow-sm'
-                  : 'text-[#BDB8AD] hover:text-[#F5F2EB] hover:bg-[#1B1A17]'
+                  ? 'bg-slate-800 text-white border border-slate-700 shadow-inner'
+                  : 'text-slate-300 hover:text-white hover:bg-slate-850'
               }`}
             >
-              <Trophy className="w-4 h-4 text-[#D4A373]" />
-              <span className="hidden sm:inline">Tournois</span>
+              <Trophy className="w-4 h-4 text-amber-400" />
+              <span>Tournois</span>
             </Link>
 
             <Link
               to="/dashboard"
-              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-sm font-semibold transition-all ${
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-all ${
                 isActive('/dashboard') && !isActive('/dashboard/joueurs') && !isActive('/dashboard/tournois/nouveau')
-                  ? 'bg-[#21201C] text-[#E2896B] border border-[#D97757]/30 shadow-sm'
-                  : 'text-[#BDB8AD] hover:text-[#F5F2EB] hover:bg-[#1B1A17]'
+                  ? 'bg-slate-800 text-white border border-slate-700 shadow-inner'
+                  : 'text-slate-300 hover:text-white hover:bg-slate-850'
               }`}
             >
-              <LayoutDashboard className="w-4 h-4 text-[#60A5FA]" />
+              <LayoutDashboard className="w-4 h-4 text-blue-400" />
               <span className="hidden md:inline">Espace Organisateur</span>
             </Link>
 
             <Link
               to="/dashboard/joueurs"
-              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-sm font-semibold transition-all ${
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-all ${
                 isActive('/dashboard/joueurs')
-                  ? 'bg-[#21201C] text-[#E2896B] border border-[#D97757]/30 shadow-sm'
-                  : 'text-[#BDB8AD] hover:text-[#F5F2EB] hover:bg-[#1B1A17]'
+                  ? 'bg-slate-800 text-white border border-slate-700 shadow-inner'
+                  : 'text-slate-300 hover:text-white hover:bg-slate-850'
               }`}
             >
-              <ShieldCheck className="w-4 h-4 text-[#7E9F80]" />
-              <span className="hidden md:inline">Annuaire</span>
+              <ShieldCheck className="w-4 h-4 text-emerald-400" />
+              <span className="hidden md:inline">Annuaire Joueurs</span>
             </Link>
 
             <Link
               to="/dashboard/tournois/nouveau"
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold btn-claude hover:scale-105 transition-all ml-1 shadow-md"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold btn-hamra shadow-lg shadow-red-600/30 ml-2"
             >
               <CirclePlus className="w-4 h-4" />
               <span>Nouveau Tournoi</span>
